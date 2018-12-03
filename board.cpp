@@ -1,6 +1,4 @@
 #include "board.h"
-#include "main.h"
-
 
 Board::Board() {
     for (int i = 0; i < BOARD_WIDTH; i++) {

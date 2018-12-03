@@ -2,7 +2,6 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "shader.h"
-#include "board.h"
 #include "display.h"
 #include "main.h"
 

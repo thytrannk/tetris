@@ -1,6 +1,4 @@
 #include "display.h"
-#include "board.h"
-#include "game.h"
 #include "main.h"
 
 #define EPSILON 0.0001f;
