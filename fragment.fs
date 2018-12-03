@@ -5,7 +5,8 @@ in vec3 pos;
 
 uniform float startX;
 uniform float startY;
-uniform float cubeSize;
+uniform float cubeSizeX;
+uniform float cubeSizeY;
 
 /**
  * Return the normalized direction to march in from the eye point for a single pixel.
@@ -82,7 +83,7 @@ vec3 phongIllumination(vec3 origin, vec3 k_a, vec3 k_d, vec3 k_s, float alpha, v
     const vec3 ambientLight = 0.5 * vec3(1.0, 1.0, 1.0);
     vec3 color = ambientLight * k_a;
 
-    vec3 light1Pos = vec3(origin.x + cubeSize / 2, origin.y + cubeSize / 2, origin.z + 0.07);
+    vec3 light1Pos = vec3(origin.x + cubeSizeX / 2, origin.y + cubeSizeY / 2, origin.z + 0.07);
     vec3 light1Intensity = vec3(0.4, 0.4, 0.4);
 
     color += phongContribForLight(k_d, k_s, alpha, p, eye,
@@ -96,16 +97,17 @@ void main()
 {
     vec3 col;
 
-    float lineWidth = cubeSize / 50;
-    float x = floor((pos.x - startX) / cubeSize);
-    float y = floor((pos.y - startY) / cubeSize);
-    vec3 origin = vec3(startX + cubeSize * x, startY + cubeSize * y, 0.0);
+    float lineWidthX = cubeSizeX / 50;
+    float lineWidthY = cubeSizeY / 50;
+    float x = floor((pos.x - startX) / cubeSizeX);
+    float y = floor((pos.y - startY) / cubeSizeY);
+    vec3 origin = vec3(startX + cubeSizeX * x, startY + cubeSizeY * y, 0.0);
     float xLocal = pos.x - origin.x;
     float yLocal = pos.y - origin.y;
 
 
-    if (xLocal < lineWidth || yLocal < lineWidth
-            || xLocal > cubeSize - 2 * lineWidth || yLocal > cubeSize - 2 * lineWidth
+    if (xLocal < lineWidthX || yLocal < lineWidthY
+            || xLocal > cubeSizeX - 2 * lineWidthX || yLocal > cubeSizeY - 2 * lineWidthY
             || ourColor == vec3(0.0, 0.0, 0.0)) {
         // borders and empty locations
         FragColor = vec4(0.0, 0.0, 0.0, 1.0);
@@ -113,7 +115,7 @@ void main()
         // locations with cubes
         col = ourColor;
         vec3 dir = rayDirection(45, vec2(xLocal, yLocal));
-        vec3 eye = vec3(origin.x, origin.y + cubeSize, 0.01);
+        vec3 eye = vec3(origin.x, origin.y + cubeSizeY, 0.01);
 
         // distance from eye to point on the board
         float dist = sqrt(eye.z * eye.z + (pos.x - eye.x) * (pos.x - eye.x) + (pos.y - eye.y) * (pos.y - eye.y));

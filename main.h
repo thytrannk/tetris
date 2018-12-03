@@ -7,7 +7,8 @@
 
 #include "board.h"
 
-const float CUBE_SIZE = 0.1;
+const float CUBE_SIZE_X = 0.15;
+const float CUBE_SIZE_Y = 0.15;
 
 extern Board board;
 

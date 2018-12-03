@@ -4,7 +4,7 @@
 
 using namespace std;
 
-#define EPSILON 0.001f;
+#define EPSILON 0.0001f;
 
 Board::Board() {
     for (int i = 0; i < BOARD_WIDTH; i++) {
@@ -58,16 +58,16 @@ float color [8 /*colors*/][4 /*rgb*/] =
         };
 
 void Board::drawBoard(float *vertices) {
-    startX = -BOARD_WIDTH / 2.0f * CUBE_SIZE;
+    startX = -BOARD_WIDTH / 2.0f * CUBE_SIZE_X;
     cout << startX << endl;
-    startY = -BOARD_HEIGHT / 2.0f * CUBE_SIZE;
+    startY = -BOARD_HEIGHT / 2.0f * CUBE_SIZE_Y;
     for (int i = 0; i < BOARD_HEIGHT; i++) {
         for (int j = 0; j < BOARD_WIDTH; j++) {
             // bottom left vertex
             // vertex[j][i].x
-            vertices[24 * (i * BOARD_WIDTH + j)] = startX + j * CUBE_SIZE;
+            vertices[24 * (i * BOARD_WIDTH + j)] = startX + j * CUBE_SIZE_X;
             // vertex[j][i].y
-            vertices[24 * (i * BOARD_WIDTH + j) + 1] = startY + i * CUBE_SIZE;
+            vertices[24 * (i * BOARD_WIDTH + j) + 1] = startY + i * CUBE_SIZE_Y;
             // vertex[j][i].z
             vertices[24 * (i * BOARD_WIDTH + j) + 2] = 0.0;
             // vertex[j][i].r
@@ -79,9 +79,9 @@ void Board::drawBoard(float *vertices) {
 
             // bottom right vertex
             // vertex[j][i].x
-            vertices[24 * (i * BOARD_WIDTH + j) + 6] = startX + (j + 1) * CUBE_SIZE - EPSILON;
+            vertices[24 * (i * BOARD_WIDTH + j) + 6] = startX + (j + 1) * CUBE_SIZE_X - EPSILON;
             // vertex[j][i].y
-            vertices[24 * (i * BOARD_WIDTH + j) + 7] = startY + i * CUBE_SIZE;
+            vertices[24 * (i * BOARD_WIDTH + j) + 7] = startY + i * CUBE_SIZE_Y;
             // vertex[j][i].z
             vertices[24 * (i * BOARD_WIDTH + j) + 8] = 0.0;
             // vertex[j][i].r
@@ -93,9 +93,9 @@ void Board::drawBoard(float *vertices) {
 
             // top right vertex
             // vertex[j][i].x
-            vertices[24 * (i * BOARD_WIDTH + j) + 12] = startX + (j + 1) * CUBE_SIZE - EPSILON;
+            vertices[24 * (i * BOARD_WIDTH + j) + 12] = startX + (j + 1) * CUBE_SIZE_X - EPSILON;
             // vertex[j][i].y
-            vertices[24 * (i * BOARD_WIDTH + j) + 13] = startY + (i + 1) * CUBE_SIZE - EPSILON;
+            vertices[24 * (i * BOARD_WIDTH + j) + 13] = startY + (i + 1) * CUBE_SIZE_Y - EPSILON;
             // vertex[j][i].z
             vertices[24 * (i * BOARD_WIDTH + j) + 14] = 0.0;
             // vertex[j][i].r
@@ -107,9 +107,9 @@ void Board::drawBoard(float *vertices) {
 
             // top left vertex
             // vertex[j][i].x
-            vertices[24 * (i * BOARD_WIDTH + j) + 18] = startX + j * CUBE_SIZE;
+            vertices[24 * (i * BOARD_WIDTH + j) + 18] = startX + j * CUBE_SIZE_X;
             // vertex[j][i].y
-            vertices[24 * (i * BOARD_WIDTH + j) + 19] = startY + (i + 1) * CUBE_SIZE - EPSILON;
+            vertices[24 * (i * BOARD_WIDTH + j) + 19] = startY + (i + 1) * CUBE_SIZE_Y - EPSILON;
             // vertex[j][i].z
             vertices[24 * (i * BOARD_WIDTH + j) + 20] = 0.0;
             // vertex[j][i].r

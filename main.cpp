@@ -133,7 +133,8 @@ int main() {
         ourShader.use();
         ourShader.setFloat("startX", board.startX);
         ourShader.setFloat("startY", board.startY);
-        ourShader.setFloat("cubeSize", CUBE_SIZE);
+        ourShader.setFloat("cubeSizeX", CUBE_SIZE_X);
+        ourShader.setFloat("cubeSizeY", CUBE_SIZE_Y);
 
         glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
         glDrawElements(GL_TRIANGLES, numTriangles * 3, GL_UNSIGNED_INT, 0);
