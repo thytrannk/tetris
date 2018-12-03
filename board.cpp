@@ -8,6 +8,22 @@ Board::Board() {
         }
     }
     board[0][0] = 2;
+    board[0][1] = 3;
+    board[0][2] = 4;
+    board[0][3] = 1;
+    board[0][4] = 0;
+    board[1][0] = 7;
+    board[1][1] = 6;
+    board[1][2] = 5;
+    board[1][3] = 3;
+    board[1][4] = 4;
+    board[2][0] = 2;
+    board[2][1] = 0;
+    board[2][2] = 1;
+    board[2][3] = 5;
+    board[2][4] = 7;
+
+
 }
 
 int Board::value(int x, int y) {
@@ -70,12 +86,12 @@ void Board::drawBoard(float *vertices) {
 void Board::indices(unsigned int *ind) {
     for (int i = 0; i < BOARD_HEIGHT; i++) {
         for (int j = 0; j < BOARD_WIDTH; j++) {
-            ind[6 * (i * BOARD_WIDTH + j)] = (unsigned int) i * (BOARD_WIDTH + 1);
-            ind[6 * (i * BOARD_WIDTH + j) + 1] = (unsigned int) i * (BOARD_WIDTH + 1) + 1;
-            ind[6 * (i * BOARD_WIDTH + j) + 2] = (unsigned int) (i + 1) * (BOARD_WIDTH + 1);
-            ind[6 * (i * BOARD_WIDTH + j) + 3] = (unsigned int) i * (BOARD_WIDTH + 1);
-            ind[6 * (i * BOARD_WIDTH + j) + 4] = (unsigned int) (i + 1) * (BOARD_WIDTH + 1);
-            ind[6 * (i * BOARD_WIDTH + j) + 5] = (unsigned int) (i + 1) * (BOARD_WIDTH + 1);
+            ind[6 * (i * BOARD_WIDTH + j)] = (unsigned int) i * (BOARD_WIDTH + 1) + j;
+            ind[6 * (i * BOARD_WIDTH + j) + 1] = (unsigned int) i * (BOARD_WIDTH + 1) + j + 1;
+            ind[6 * (i * BOARD_WIDTH + j) + 2] = (unsigned int) (i + 1) * (BOARD_WIDTH + 1) + j + 1;
+            ind[6 * (i * BOARD_WIDTH + j) + 3] = (unsigned int) i * (BOARD_WIDTH + 1) + j;
+            ind[6 * (i * BOARD_WIDTH + j) + 4] = (unsigned int) (i + 1) * (BOARD_WIDTH + 1) + j;
+            ind[6 * (i * BOARD_WIDTH + j) + 5] = (unsigned int) (i + 1) * (BOARD_WIDTH + 1) + j + 1;
         }
     }
 }

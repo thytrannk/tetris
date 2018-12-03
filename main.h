@@ -7,7 +7,7 @@
 
 #include "board.h"
 
-const float CUBE_SIZE = 0.05;
+const float CUBE_SIZE = 0.1;
 
 Board board;
 

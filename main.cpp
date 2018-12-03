@@ -17,7 +17,7 @@ const char fragmentSource[] = "../fragment.fs";
 
 int main() {
     Board board;
-    
+
     // glfw: initialize and configure
     // ------------------------------
     glfwInit();
@@ -64,6 +64,22 @@ int main() {
     int numTriangles = BOARD_WIDTH * BOARD_HEIGHT * 2;
     auto *indices = new unsigned int[numTriangles * 3];
     board.indices(indices);
+
+    cout << "vertices" << endl;
+    for (int i = 0; i < numVertices * 6; i++) {
+        cout << vertices[i] << ";";
+        if (i%6 == 5) {
+            cout << endl;
+        }
+    }
+    cout << endl;
+    cout << "indices" << endl;
+    for (int i = 0; i < numTriangles * 3; i++) {
+        cout << indices[i] << ";";
+        if (i%3 == 2) {
+            cout << endl;
+        }
+    }
 
     unsigned int VBO, VAO, EBO;
     glGenVertexArrays(1, &VAO);
