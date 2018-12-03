@@ -125,22 +125,15 @@ int main() {
 
         // render
         // ------
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
         // draw our first triangle
 
-//        glUseProgram(ourShader.ID);
         ourShader.use();
-        
-        int uni_startX = glGetUniformLocation(ourShader.ID, "startX");
-        int uni_startY = glGetUniformLocation(ourShader.ID, "startY");
-        int uni_cubeSize = glGetUniformLocation(ourShader.ID, "cubeSize");
-
-        glUniform1f(uni_startX, board.startX);
-        glUniform1f(uni_startY, board.startY);
-        glUniform1f(uni_cubeSize, CUBE_SIZE);
-
+        ourShader.setFloat("startX", board.startX);
+        ourShader.setFloat("startY", board.startY);
+        ourShader.setFloat("cubeSize", CUBE_SIZE);
 
         glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
         glDrawElements(GL_TRIANGLES, numTriangles * 3, GL_UNSIGNED_INT, 0);

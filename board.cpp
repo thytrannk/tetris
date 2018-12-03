@@ -1,5 +1,8 @@
 #include "board.h"
 #include "main.h"
+#include <iostream>
+
+using namespace std;
 
 #define EPSILON 0.001f;
 
@@ -56,6 +59,7 @@ float color [8 /*colors*/][4 /*rgb*/] =
 
 void Board::drawBoard(float *vertices) {
     startX = -BOARD_WIDTH / 2.0f * CUBE_SIZE;
+    cout << startX << endl;
     startY = -BOARD_HEIGHT / 2.0f * CUBE_SIZE;
     for (int i = 0; i < BOARD_HEIGHT; i++) {
         for (int j = 0; j < BOARD_WIDTH; j++) {
