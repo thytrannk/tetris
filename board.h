@@ -7,10 +7,8 @@
 class Board {
 public:
     Board ();
-    void drawBoard(float *vertices);
-    void indices(unsigned int *ind);
     int value(int x, int y);
-    float startX, startY;
+
 private:
     int board[BOARD_WIDTH][BOARD_HEIGHT];
     void deleteLine(int y);

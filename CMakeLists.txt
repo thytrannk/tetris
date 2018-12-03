@@ -9,7 +9,12 @@ link_directories($ENV{PROJECT_HOME}/glad/include)
 #find_library(CGLM_LIBRARY cglm)
 #include_directories(cglm)
 
-add_executable(tetris main.cpp pieces.cpp pieces.h board.cpp board.h glad.c shader.h main.h)
+add_executable(tetris main.cpp main.h
+        glad.c shader.h
+        pieces.cpp pieces.h
+        board.cpp board.h
+        game.cpp game.h
+        display.cpp display.h)
 
 find_package(PkgConfig REQUIRED)
 pkg_search_module(GLFW REQUIRED glfw3)

@@ -5,11 +5,12 @@
 #ifndef TETRIS_MAIN_H
 #define TETRIS_MAIN_H
 
-#include "board.h"
+#include "game.h"
 
 const float CUBE_SIZE_X = 0.15;
 const float CUBE_SIZE_Y = 0.15;
 
-extern Board board;
+//extern Board board;
+extern Game game;
 
 #endif //TETRIS_MAIN_H

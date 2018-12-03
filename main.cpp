@@ -2,6 +2,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "shader.h"
+#include "board.h"
+#include "display.h"
 #include "main.h"
 
 using namespace std;
@@ -15,8 +17,9 @@ const unsigned int SCR_HEIGHT = 600;
 const char vertexSource[] = "../vertex.vs";
 const char fragmentSource[] = "../fragment.fs";
 
+Game game;
+
 int main() {
-    Board board;
 
     // glfw: initialize and configure
     // ------------------------------
@@ -59,27 +62,11 @@ int main() {
 
     int numVertices = BOARD_HEIGHT * BOARD_WIDTH * 4;
     auto *vertices = new float[numVertices * 6];
-    board.drawBoard(vertices);
+    drawBoard(vertices);
 
     int numTriangles = BOARD_WIDTH * BOARD_HEIGHT * 2;
     auto *indices = new unsigned int[numTriangles * 3];
-    board.indices(indices);
-
-//    cout << "vertices" << endl;
-//    for (int i = 0; i < numVertices * 6; i++) {
-//        cout << vertices[i] << ";";
-//        if (i%6 == 5) {
-//            cout << endl;
-//        }
-//    }
-//    cout << endl;
-//    cout << "indices" << endl;
-//    for (int i = 0; i < numTriangles * 3; i++) {
-//        cout << indices[i] << ";";
-//        if (i%3 == 2) {
-//            cout << endl;
-//        }
-//    }
+    indexVertices(indices);
 
     unsigned int VBO, VAO, EBO;
     glGenVertexArrays(1, &VAO);
@@ -131,8 +118,8 @@ int main() {
         // draw our first triangle
 
         ourShader.use();
-        ourShader.setFloat("startX", board.startX);
-        ourShader.setFloat("startY", board.startY);
+        ourShader.setFloat("startX", startX);
+        ourShader.setFloat("startY", startY);
         ourShader.setFloat("cubeSizeX", CUBE_SIZE_X);
         ourShader.setFloat("cubeSizeY", CUBE_SIZE_Y);
 
