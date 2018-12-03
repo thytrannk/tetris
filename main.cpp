@@ -1,8 +1,8 @@
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include "board.h"
 #include "shader.h"
+#include "main.h"
 
 using namespace std;
 
@@ -129,7 +129,19 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT);
 
         // draw our first triangle
+
+//        glUseProgram(ourShader.ID);
         ourShader.use();
+        
+        int uni_startX = glGetUniformLocation(ourShader.ID, "startX");
+        int uni_startY = glGetUniformLocation(ourShader.ID, "startY");
+        int uni_cubeSize = glGetUniformLocation(ourShader.ID, "cubeSize");
+
+        glUniform1f(uni_startX, board.startX);
+        glUniform1f(uni_startY, board.startY);
+        glUniform1f(uni_cubeSize, CUBE_SIZE);
+
+
         glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
         glDrawElements(GL_TRIANGLES, numTriangles * 3, GL_UNSIGNED_INT, 0);
         // glBindVertexArray(0); // no need to unbind it every time

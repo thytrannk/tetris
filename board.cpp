@@ -24,8 +24,6 @@ Board::Board() {
     board[2][2] = 1;
     board[2][3] = 5;
     board[2][4] = 7;
-
-
 }
 
 int Board::value(int x, int y) {

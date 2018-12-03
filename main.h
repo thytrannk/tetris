@@ -9,6 +9,6 @@
 
 const float CUBE_SIZE = 0.1;
 
-Board board;
+extern Board board;
 
 #endif //TETRIS_MAIN_H
