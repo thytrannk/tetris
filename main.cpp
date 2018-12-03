@@ -9,7 +9,7 @@ using namespace std;
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
 
-const unsigned int SCR_WIDTH = 800;
+const unsigned int SCR_WIDTH = 600;
 const unsigned int SCR_HEIGHT = 600;
 
 const char vertexSource[] = "../vertex.vs";
@@ -57,7 +57,7 @@ int main() {
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
 
-    int numVertices = (BOARD_HEIGHT + 1) * (BOARD_WIDTH + 1);
+    int numVertices = BOARD_HEIGHT * BOARD_WIDTH * 4;
     auto *vertices = new float[numVertices * 6];
     board.drawBoard(vertices);
 
@@ -65,21 +65,21 @@ int main() {
     auto *indices = new unsigned int[numTriangles * 3];
     board.indices(indices);
 
-    cout << "vertices" << endl;
-    for (int i = 0; i < numVertices * 6; i++) {
-        cout << vertices[i] << ";";
-        if (i%6 == 5) {
-            cout << endl;
-        }
-    }
-    cout << endl;
-    cout << "indices" << endl;
-    for (int i = 0; i < numTriangles * 3; i++) {
-        cout << indices[i] << ";";
-        if (i%3 == 2) {
-            cout << endl;
-        }
-    }
+//    cout << "vertices" << endl;
+//    for (int i = 0; i < numVertices * 6; i++) {
+//        cout << vertices[i] << ";";
+//        if (i%6 == 5) {
+//            cout << endl;
+//        }
+//    }
+//    cout << endl;
+//    cout << "indices" << endl;
+//    for (int i = 0; i < numTriangles * 3; i++) {
+//        cout << indices[i] << ";";
+//        if (i%3 == 2) {
+//            cout << endl;
+//        }
+//    }
 
     unsigned int VBO, VAO, EBO;
     glGenVertexArrays(1, &VAO);
@@ -131,7 +131,7 @@ int main() {
         // draw our first triangle
         ourShader.use();
         glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, numTriangles * 3, GL_UNSIGNED_INT, 0);
         // glBindVertexArray(0); // no need to unbind it every time
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
