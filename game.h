@@ -13,8 +13,8 @@ private:
     int pieceX; // x coordinate of the bottom left corner of piece matrix
     int pieceY; // y coordinate of the bottom left corner of piece matrix
     void generatePiece();
+    bool gameOver();
 };
-
 
 
 #endif //TETRIS_GAME_H

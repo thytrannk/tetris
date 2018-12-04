@@ -4,6 +4,13 @@
 
 Game::Game(){
     generatePiece();
+    if (!gameOver()) {
+
+    }
+}
+
+bool Game::gameOver() {
+    return false;
 }
 
 void Game::generatePiece() {
