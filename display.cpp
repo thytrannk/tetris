@@ -281,46 +281,16 @@ void render() {
     // Draw the board
 
     int numVertices = BOARD_HEIGHT * BOARD_WIDTH * 4;
-    auto *vertices = new float[numVertices * 6];
-    auto *vertices2 = new float[numVertices * 6];
-    auto *position = new float[numVertices * 3];
+    auto *positions = new float[numVertices * 3];
     auto *colors = new float[numVertices * 3];
-    drawBoard(vertices);
-    getBoardVertices(position);
+    getBoardVertices(positions);
     getBoardColor(colors);
-
-    for (int i = 0; i < numVertices; i++) {
-        vertices2[6 * i] = position[3 * i];
-        vertices2[6 * i + 1] = position[3 * i + 1];
-        vertices2[6 * i + 2] = position[3 * i + 2];
-        vertices2[6 * i + 3] = colors[3 * i];
-        vertices2[6 * i + 4] = colors[3 * i + 1];
-        vertices2[6 * i + 5] = colors[3 * i + 2];
-    }
-
-//    cout << endl << "vertices : ";
-//    for (int i = 0; i < numVertices; i++) {
-//        cout << endl << "vertex" << i;
-//        cout << endl << "vertices : ";
-//        for (int j = 0; j < 6; j++) {
-//            cout << vertices[i * numVertices + j] << ";";
-//        }
-//        cout << endl << "vertices2: ";
-//        for (int j = 0; j < 6; j++) {
-//            cout << vertices2[i * numVertices + j] << ";";
-//        }
-//    }
-
-
-    delete[] position;
-    delete[] colors;
-    delete[] vertices;
 
     int numTriangles = BOARD_WIDTH * BOARD_HEIGHT * 2;
     auto *indices = new unsigned int[numTriangles * 3];
     indexVertices(indices);
 
-    unsigned int VBO, VAO, EBO;
+    unsigned int VBO, VAO, EBO, VBO_c;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
     glGenBuffers(1, &EBO);
@@ -328,18 +298,26 @@ void render() {
     glBindVertexArray(VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * numVertices * 6, vertices2, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * numVertices * 3, positions, GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * numTriangles * 3, indices, GL_STATIC_DRAW);
 
-    delete[] vertices2;
-    delete[] indices;
+//    delete[] vertices2;
+
     // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+
+    glGenBuffers(1, &VBO_c);
+    // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
+    glBindVertexArray(VAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO_c);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * numVertices * 3, colors, GL_STATIC_DRAW);
+
     // color attribute
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3* sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(1);
 
     // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
@@ -349,9 +327,13 @@ void render() {
     // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
     glBindVertexArray(0);
 
+    delete[] positions;
+    delete[] colors;
+    delete[] indices;
+
     // Draw the current piece
     int pcNumVertices = 5 * 5 * 4;
-    vertices = new float[pcNumVertices * 6];
+    auto *vertices = new float[pcNumVertices * 6];
     drawPiece(vertices);
     int pcNumTriangles = 5 * 5 * 2;
     indices = new unsigned int[pcNumTriangles * 3];
@@ -365,10 +347,10 @@ void render() {
     glBindVertexArray(VAO2);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO2);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * numVertices * 6, vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * pcNumVertices * 6, vertices, GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO2);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * numTriangles * 3, indices, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * pcNumTriangles * 3, indices, GL_STATIC_DRAW);
     delete[] vertices;
     delete[] indices;
     // position attribute
