@@ -48,10 +48,6 @@ int main() {
         return -1;
     }
 
-    int xpos, ypos;
-    glfwGetWindowPos(window, &xpos, &ypos);
-    glfwSetWindowPos(window, xpos, ypos++);
-
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 

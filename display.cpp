@@ -299,10 +299,22 @@ void render(const char *vertexSource, const char *fragmentSource, GLFWwindow* wi
     glDrawElements(GL_TRIANGLES, pcNumTriangles * 3, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0); // no need to unbind it every time
 
+
     // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
     // -------------------------------------------------------------------------------
     glfwSwapBuffers(window);
     glfwPollEvents();
+
+#ifdef __APPLE__
+    static bool macMoved = false;
+
+    if(!macMoved) {
+        int x, y;
+        glfwGetWindowPos(window, &x, &y);
+        glfwSetWindowPos(window, ++x, y);
+        macMoved = true;
+    }
+#endif
 
     // optional: de-allocate all resources once they've outlived their purpose:
     // ------------------------------------------------------------------------
