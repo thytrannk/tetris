@@ -1,9 +1,12 @@
+#define GLFW_INCLUDE_NONE
+#include <GLFW/glfw3.h>
 #include <chrono>
 #include <thread>
 #include <random>
 #include "game.h"
 #include "main.h"
 #include "display.h"
+#include "shader.h"
 #include <iostream>
 
 using namespace std;
@@ -18,11 +21,13 @@ mt19937 mt(rd());
 uniform_int_distribution<> dist(0.0, 6.0);
 
 void Game::Loop() {
+    Shader ourShader = compileShader();
+    bindBoardVertices();
     generatePiece();
     while (!invalid() && !glfwWindowShouldClose(window)) {
         int furthestBottom;
         currentPiece->furthestBottom(BOARD_WIDTH, BOARD_HEIGHT, furthestBottom);
-        render();
+        render(ourShader);
         sleep_for(TIME);
         pieceY--;
 
@@ -41,6 +46,9 @@ void Game::Loop() {
         }
     }
     cout << "Game Over!" << endl;
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &EBO);
 }
 
 bool Game::invalid() {

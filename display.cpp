@@ -13,10 +13,6 @@ float startX, startY;
 float pcStartX, pcStartY;
 unsigned int VBO, VAO, EBO;
 
-//// build and compile our shader program
-//// ------------------------------------
-//Shader ourShader(vertexSource, fragmentSource);
-
 float color [9 /*colors*/][3 /*rgb*/] =
         {
                 // Empty
@@ -38,71 +34,6 @@ float color [9 /*colors*/][3 /*rgb*/] =
                 // Transparent
                 {1.0, 1.0, 1.0},
         };
-
-void drawBoard(float *vertices) {
-    startX = -BOARD_WIDTH / 2.0f * CUBE_SIZE_X;
-    startY = -BOARD_HEIGHT / 2.0f * CUBE_SIZE_Y;
-    for (int i = 0; i < BOARD_HEIGHT; i++) {
-        for (int j = 0; j < BOARD_WIDTH; j++) {
-            // bottom left vertex
-            // vertex[j][i].x
-            vertices[24 * (i * BOARD_WIDTH + j)] = startX + j * CUBE_SIZE_X;
-            // vertex[j][i].y
-            vertices[24 * (i * BOARD_WIDTH + j) + 1] = startY + i * CUBE_SIZE_Y;
-            // vertex[j][i].z
-            vertices[24 * (i * BOARD_WIDTH + j) + 2] = 0.0;
-            // vertex[j][i].r
-            vertices[24 * (i * BOARD_WIDTH + j) + 3] = color[game.board.value(j, i)][0];
-            // vertex[j][i].g
-            vertices[24 * (i * BOARD_WIDTH + j) + 4] = color[game.board.value(j, i)][1];
-            // vertex[j][i].b
-            vertices[24 * (i * BOARD_WIDTH + j) + 5] = color[game.board.value(j, i)][2];
-
-            // bottom right vertex
-            // vertex[j][i].x
-            vertices[24 * (i * BOARD_WIDTH + j) + 6] = startX + (j + 1) * CUBE_SIZE_X - EPSILON;
-            // vertex[j][i].y
-            vertices[24 * (i * BOARD_WIDTH + j) + 7] = startY + i * CUBE_SIZE_Y;
-            // vertex[j][i].z
-            vertices[24 * (i * BOARD_WIDTH + j) + 8] = 0.0;
-            // vertex[j][i].r
-            vertices[24 * (i * BOARD_WIDTH + j) + 9] = color[game.board.value(j, i)][0];
-            // vertex[j][i].g
-            vertices[24 * (i * BOARD_WIDTH + j) + 10] = color[game.board.value(j, i)][1];
-            // vertex[j][i].b
-            vertices[24 * (i * BOARD_WIDTH + j) + 11] = color[game.board.value(j, i)][2];
-
-            // top right vertex
-            // vertex[j][i].x
-            vertices[24 * (i * BOARD_WIDTH + j) + 12] = startX + (j + 1) * CUBE_SIZE_X - EPSILON;
-            // vertex[j][i].y
-            vertices[24 * (i * BOARD_WIDTH + j) + 13] = startY + (i + 1) * CUBE_SIZE_Y - EPSILON;
-            // vertex[j][i].z
-            vertices[24 * (i * BOARD_WIDTH + j) + 14] = 0.0;
-            // vertex[j][i].r
-            vertices[24 * (i * BOARD_WIDTH + j) + 15] = color[game.board.value(j, i)][0];
-            // vertex[j][i].g
-            vertices[24 * (i * BOARD_WIDTH + j) + 16] = color[game.board.value(j, i)][1];
-            // vertex[j][i].b
-            vertices[24 * (i * BOARD_WIDTH + j) + 17] = color[game.board.value(j, i)][2];
-
-            // top left vertex
-            // vertex[j][i].x
-            vertices[24 * (i * BOARD_WIDTH + j) + 18] = startX + j * CUBE_SIZE_X;
-            // vertex[j][i].y
-            vertices[24 * (i * BOARD_WIDTH + j) + 19] = startY + (i + 1) * CUBE_SIZE_Y - EPSILON;
-            // vertex[j][i].z
-            vertices[24 * (i * BOARD_WIDTH + j) + 20] = 0.0;
-            // vertex[j][i].r
-            vertices[24 * (i * BOARD_WIDTH + j) + 21] = color[game.board.value(j, i)][0];
-            // vertex[j][i].g
-            vertices[24 * (i * BOARD_WIDTH + j) + 22] = color[game.board.value(j, i)][1];
-            // vertex[j][i].b
-            vertices[24 * (i * BOARD_WIDTH + j) + 23] = color[game.board.value(j, i)][2];
-        }
-
-    }
-}
 
 void getBoardVertices(float *vertices) {
     startX = -BOARD_WIDTH / 2.0f * CUBE_SIZE_X;
@@ -310,13 +241,14 @@ void bindBoardVertices() {
     delete[] indices;
 }
 
-void render() {
-
+Shader compileShader() {
     // build and compile our shader program
     // ------------------------------------
     Shader ourShader(vertexSource, fragmentSource);
+    return ourShader;
+}
 
-    bindBoardVertices();
+void render(Shader ourShader) {
 
     unsigned int VBO_c;
     int numVertices = BOARD_HEIGHT * BOARD_WIDTH * 4;
@@ -431,9 +363,13 @@ void render() {
 
     // optional: de-allocate all resources once they've outlived their purpose:
     // ------------------------------------------------------------------------
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
-    glDeleteBuffers(1, &EBO);
+//    glDeleteVertexArrays(1, &VAO);
+//    glDeleteBuffers(1, &VBO);
+//    glDeleteBuffers(1, &EBO);
+    glDeleteBuffers(1, &VBO_c);
+    glDeleteVertexArrays(1, &VAO2);
+    glDeleteBuffers(1, &VBO2);
+    glDeleteBuffers(1, &EBO2);
 }
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly

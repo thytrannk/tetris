@@ -3,8 +3,12 @@
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
+#include "shader.h"
 
 extern float startX, startY;
-void render();
+extern unsigned int VBO, VAO, EBO;
+Shader compileShader();
+void bindBoardVertices();
+void render(Shader ourShader);
 
 #endif //TETRIS_DISPLAY_H
