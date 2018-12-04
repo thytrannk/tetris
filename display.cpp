@@ -11,6 +11,11 @@ void processInput(GLFWwindow *window);
 
 float startX, startY;
 float pcStartX, pcStartY;
+unsigned int VBO, VAO, EBO;
+
+//// build and compile our shader program
+//// ------------------------------------
+//Shader ourShader(vertexSource, fragmentSource);
 
 float color [9 /*colors*/][3 /*rgb*/] =
         {
@@ -270,27 +275,21 @@ void indexPiece(unsigned int *ind) {
     }
 }
 
-void render() {
-    // build and compile our shader program
-    // ------------------------------------
-    Shader ourShader(vertexSource, fragmentSource);
-
+void bindBoardVertices() {
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
 
-    // Draw the board
+    // Bind vertices positions and indices
 
     int numVertices = BOARD_HEIGHT * BOARD_WIDTH * 4;
     auto *positions = new float[numVertices * 3];
-    auto *colors = new float[numVertices * 3];
     getBoardVertices(positions);
-    getBoardColor(colors);
+
 
     int numTriangles = BOARD_WIDTH * BOARD_HEIGHT * 2;
     auto *indices = new unsigned int[numTriangles * 3];
     indexVertices(indices);
 
-    unsigned int VBO, VAO, EBO, VBO_c;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
     glGenBuffers(1, &EBO);
@@ -303,11 +302,27 @@ void render() {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * numTriangles * 3, indices, GL_STATIC_DRAW);
 
-//    delete[] vertices2;
-
     // position attribute
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+
+    delete[] positions;
+    delete[] indices;
+}
+
+void render() {
+
+    // build and compile our shader program
+    // ------------------------------------
+    Shader ourShader(vertexSource, fragmentSource);
+
+    bindBoardVertices();
+
+    unsigned int VBO_c;
+    int numVertices = BOARD_HEIGHT * BOARD_WIDTH * 4;
+    int numTriangles = BOARD_WIDTH * BOARD_HEIGHT * 2;
+    auto *colors = new float[numVertices * 3];
+    getBoardColor(colors);
 
     glGenBuffers(1, &VBO_c);
     // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
@@ -327,16 +342,14 @@ void render() {
     // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
     glBindVertexArray(0);
 
-    delete[] positions;
     delete[] colors;
-    delete[] indices;
 
     // Draw the current piece
     int pcNumVertices = 5 * 5 * 4;
     auto *vertices = new float[pcNumVertices * 6];
     drawPiece(vertices);
     int pcNumTriangles = 5 * 5 * 2;
-    indices = new unsigned int[pcNumTriangles * 3];
+    auto *indices = new unsigned int[pcNumTriangles * 3];
     indexPiece(indices);
 
     unsigned int VBO2, VAO2, EBO2;
@@ -351,8 +364,7 @@ void render() {
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO2);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * pcNumTriangles * 3, indices, GL_STATIC_DRAW);
-    delete[] vertices;
-    delete[] indices;
+
     // position attribute
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
@@ -366,6 +378,11 @@ void render() {
     // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
     // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
     glBindVertexArray(0);
+
+    delete[] vertices;
+    delete[] indices;
+
+
     // render loop
     // -----------
 
