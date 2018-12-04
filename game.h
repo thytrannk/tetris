@@ -6,12 +6,12 @@
 
 class Game {
 public:
-    Game();
+    void Loop();
     Board board;
-private:
     Pieces *currentPiece;
     int pieceX; // x coordinate of the bottom left corner of piece matrix
     int pieceY; // y coordinate of the bottom left corner of piece matrix
+private:
     void generatePiece();
     bool gameOver();
 };

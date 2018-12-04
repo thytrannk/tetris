@@ -2,7 +2,7 @@
 #define TETRIS_BOARD_H
 
 #define BOARD_HEIGHT 5
-#define BOARD_WIDTH 3
+#define BOARD_WIDTH 7
 
 class Board {
 public:

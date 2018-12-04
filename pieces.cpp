@@ -1,4 +1,7 @@
 #include "pieces.h"
+#include <iostream>
+
+using namespace std;
 
 int piecesCode [7 /*kind */ ][4 /* rotation */ ][5 /* horizontal blocks */ ][5 /* vertical blocks */ ] =
         {
@@ -223,8 +226,8 @@ int piecesCode [7 /*kind */ ][4 /* rotation */ ][5 /* horizontal blocks */ ][5 /
 
 // Pieces definition
 Pieces::Pieces(int id) {
-    shape = &(piecesCode[id][0][0][0]);
     pieceID = id;
+    rotation = 0;
 }
 
 void Pieces::StartLocation(int boardWidth, int boardHeight, int &x, int &y) {
@@ -270,8 +273,12 @@ void Pieces::StartLocation(int boardWidth, int boardHeight, int &x, int &y) {
 //            6,
 //        // T
 //            7,
-//        };
 
-bool Pieces::IsBlockFilled (int piece, int rotation, int x, int y) {
-    return (piecesCode[piece][rotation][x][y] != 0);
+int Pieces::pieceValue(int x, int y) {
+
+    return (piecesCode[pieceID][rotation][4-y][x]);
+//    cout << "pieceID=" << pieceID << endl;
+//    cout << "rotation=" << rotation << endl;
+//    cout << "piecesCode[pieceID][rotation][x][y]" << piecesCode[pieceID][rotation][x][y] << endl;
+//    return 2;
 }

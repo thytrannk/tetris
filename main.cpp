@@ -1,8 +1,5 @@
 #include <iostream>
 #include <glad/glad.h>
-#include <GLFW/glfw3.h>
-//#include "shader.h"
-#include "display.h"
 #include "main.h"
 
 using namespace std;
@@ -13,10 +10,10 @@ void processInput(GLFWwindow *window);
 const unsigned int SCR_WIDTH = 600;
 const unsigned int SCR_HEIGHT = 600;
 
+Game game;
+GLFWwindow *window;
 const char vertexSource[] = "../vertex.vs";
 const char fragmentSource[] = "../fragment.fs";
-
-Game game;
 
 int main() {
 
@@ -33,7 +30,7 @@ int main() {
 
     // glfw window creation
     // --------------------
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Tetris", NULL, NULL);
+    window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Tetris", NULL, NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -51,11 +48,16 @@ int main() {
         return -1;
     }
 
-    render(vertexSource, fragmentSource, window);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    game.Loop();
 
     // glfw: terminate, clearing all previously allocated GLFW resources.
     // ------------------------------------------------------------------
     glfwTerminate();
+
+    delete game.currentPiece;
     return 0;
 }
 

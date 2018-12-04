@@ -7,6 +7,8 @@ uniform float startX;
 uniform float startY;
 uniform float cubeSizeX;
 uniform float cubeSizeY;
+uniform int boardWidth;
+uniform int boardHeight;
 
 /**
  * Return the normalized direction to march in from the eye point for a single pixel.
@@ -93,44 +95,52 @@ vec3 phongIllumination(vec3 origin, vec3 k_a, vec3 k_d, vec3 k_s, float alpha, v
     return color;
 }
 
-void main()
-{
+void main() {
     vec3 col;
 
     float lineWidthX = cubeSizeX / 50;
     float lineWidthY = cubeSizeY / 50;
     float x = floor((pos.x - startX) / cubeSizeX);
     float y = floor((pos.y - startY) / cubeSizeY);
-    vec3 origin = vec3(startX + cubeSizeX * x, startY + cubeSizeY * y, 0.0);
+    vec3
+    origin = vec3(startX + cubeSizeX * x, startY + cubeSizeY * y, 0.0);
     float xLocal = pos.x - origin.x;
     float yLocal = pos.y - origin.y;
 
-
     if (xLocal < lineWidthX || yLocal < lineWidthY
-            || xLocal > cubeSizeX - 2 * lineWidthX || yLocal > cubeSizeY - 2 * lineWidthY
-            || ourColor == vec3(0.0, 0.0, 0.0)) {
-        // borders and empty locations
+        || xLocal > cubeSizeX - 2 * lineWidthX || yLocal > cubeSizeY - 2 * lineWidthY
+        || ourColor == vec3(0.0, 0.0, 0.0)) {
+        // borders, empty locations, and outside board
         FragColor = vec4(0.0, 0.0, 0.0, 1.0);
-    } else if (ourColor == vec3(1.0, 1.0, 1.0)) {
-        // transparent locations on pieces
-        FragColor = vec4(0.0, 0.0, 0.0, 0.0);
-    } else {
+    } else if (ourColor != vec3(1.0, 1.0, 1.0)) {
         // locations with cubes
         col = ourColor;
-        vec3 dir = rayDirection(45, vec2(xLocal, yLocal));
-        vec3 eye = vec3(origin.x, origin.y + cubeSizeY, 0.01);
+        vec3
+        dir = rayDirection(45, vec2(xLocal, yLocal));
+        vec3
+        eye = vec3(origin.x, origin.y + cubeSizeY, 0.01);
 
         // distance from eye to point on the board
         float dist = sqrt(eye.z * eye.z + (pos.x - eye.x) * (pos.x - eye.x) + (pos.y - eye.y) * (pos.y - eye.y));
 
         // shading details
-        vec3 k_a = col;
-        vec3 k_d = col;
-        vec3 k_s = vec3(1.0, 1.0, 1.0);
+        vec3
+        k_a = col;
+        vec3
+        k_d = col;
+        vec3
+        k_s = vec3(1.0, 1.0, 1.0);
         float alpha = 1.5;
 
-        vec3 color = phongIllumination(origin, k_a, k_d, k_s, alpha, pos, eye);
+        vec3
+        color = phongIllumination(origin, k_a, k_d, k_s, alpha, pos, eye);
 
         FragColor = vec4(color, 1.0);
+    }
+    if (ourColor == vec3(1.0, 1.0, 1.0)
+        || x > boardWidth - 1 || x < 0
+        || y > boardHeight - 1 || y < 0) {
+        // transparent locations on pieces
+        FragColor = vec4(0.0, 0.0, 0.0, 0.0);
     }
 }
