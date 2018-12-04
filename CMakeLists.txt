@@ -14,7 +14,7 @@ add_executable(tetris main.cpp main.h
         pieces.cpp pieces.h
         board.cpp board.h
         game.cpp game.h
-        display.cpp display.h)
+        display.cpp display.h timer.cpp timer.h)
 
 find_package(PkgConfig REQUIRED)
 pkg_search_module(GLFW REQUIRED glfw3)

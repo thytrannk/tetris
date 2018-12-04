@@ -14,6 +14,8 @@ public:
 private:
     void generatePiece();
     bool invalid();
+    void saveBoard(void);
+    void fallPiece(int furthestBottom);
 };
 
 

@@ -32,26 +32,36 @@ void Game::Loop() {
         currentPiece->furthestBottom(BOARD_WIDTH, BOARD_HEIGHT, furthestBottom);
         render(ourShader);
         sleep_for(TIME);
-        pieceY--;
-
-        if (invalid() || pieceY < furthestBottom) {
-            // reach the bottom
-            pieceY++;
-            for (int y = 0; y < 5; y++) {
-                for (int x = 0; x < 5; x++) {
-                    int pieceCol = currentPiece->pieceValue(x, y);
-                    if (pieceCol != 8) {
-                        board.assign(x + pieceX, y + pieceY, pieceCol);
-                    }
-                }
-            }
-            generatePiece();
-        }
+        fallPiece(furthestBottom);
     }
     cout << "Game Over!" << endl;
+    delete currentPiece;
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
     glDeleteBuffers(1, &EBO);
+}
+
+void Game::fallPiece(int furthestBottom) {
+    pieceY--;
+
+    if (invalid() || pieceY < furthestBottom) {
+        // reach the bottom
+        pieceY++;
+        saveBoard();
+        delete currentPiece;
+        generatePiece();
+    }
+}
+
+void Game::saveBoard(void) {
+    for (int y = 0; y < 5; y++) {
+        for (int x = 0; x < 5; x++) {
+            int pieceCol = currentPiece->pieceValue(x, y);
+            if (pieceCol != 8) {
+                board.assign(x + pieceX, y + pieceY, pieceCol);
+            }
+        }
+    }
 }
 
 bool Game::invalid() {

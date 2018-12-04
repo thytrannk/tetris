@@ -57,7 +57,6 @@ int main() {
     // ------------------------------------------------------------------
     glfwTerminate();
 
-    delete game.currentPiece;
     return 0;
 }
 
