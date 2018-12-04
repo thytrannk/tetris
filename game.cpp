@@ -24,6 +24,9 @@ void Game::Loop() {
     Shader ourShader = compileShader();
     bindBoardVertices();
     generatePiece();
+    #ifdef __APPLE__
+        dummyRender();
+    #endif
     while (!invalid() && !glfwWindowShouldClose(window)) {
         int furthestBottom;
         currentPiece->furthestBottom(BOARD_WIDTH, BOARD_HEIGHT, furthestBottom);

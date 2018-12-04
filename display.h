@@ -10,5 +10,6 @@ extern unsigned int VBO, VAO, EBO;
 Shader compileShader();
 void bindBoardVertices();
 void render(Shader ourShader);
+void dummyRender();
 
 #endif //TETRIS_DISPLAY_H

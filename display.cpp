@@ -324,7 +324,7 @@ void render(Shader ourShader) {
 
     // render
     // ------
-    glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
+//    glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
     ourShader.use();
@@ -350,26 +350,26 @@ void render(Shader ourShader) {
     glfwSwapBuffers(window);
     glfwPollEvents();
 
-#ifdef __APPLE__
-    static bool macMoved = false;
-
-    if(!macMoved) {
-        int x, y;
-        glfwGetWindowPos(window, &x, &y);
-        glfwSetWindowPos(window, ++x, y);
-        macMoved = true;
-    }
-#endif
-
-    // optional: de-allocate all resources once they've outlived their purpose:
-    // ------------------------------------------------------------------------
-//    glDeleteVertexArrays(1, &VAO);
-//    glDeleteBuffers(1, &VBO);
-//    glDeleteBuffers(1, &EBO);
     glDeleteBuffers(1, &VBO_c);
     glDeleteVertexArrays(1, &VAO2);
     glDeleteBuffers(1, &VBO2);
     glDeleteBuffers(1, &EBO2);
+}
+
+void dummyRender() {
+
+    glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
+    // -------------------------------------------------------------------------------
+    glfwSwapBuffers(window);
+    glfwPollEvents();
+
+    int x, y;
+    glfwGetWindowPos(window, &x, &y);
+    glfwSetWindowPos(window, ++x, y);
+
 }
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
