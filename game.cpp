@@ -1,7 +1,6 @@
-#include <stdlib.h>
-#include <time.h>
 #include <chrono>
 #include <thread>
+#include <random>
 #include "game.h"
 #include "main.h"
 #include "display.h"
@@ -12,10 +11,13 @@ using namespace std::this_thread;     // sleep_for, sleep_until
 using namespace std::chrono_literals; // ns, us, ms, s, h, etc.
 using std::chrono::system_clock;
 
-#define TIME 0.8s
+#define TIME 0.4s
+
+random_device rd;
+mt19937 mt(rd());
+uniform_int_distribution<> dist(0.0, 6.0);
 
 void Game::Loop() {
-    srand((unsigned int) time(nullptr));
     generatePiece();
     while (!invalid() && !glfwWindowShouldClose(window)) {
         int furthestBottom;
@@ -58,9 +60,7 @@ bool Game::invalid() {
 
 void Game::generatePiece() {
     /* generate random piece from 0 to 7 */
-    int pieceID = rand() % 7;
-//    pieceID = 3;
+    int pieceID = dist(mt);
     currentPiece = new Pieces(pieceID);
     currentPiece->StartLocation(BOARD_WIDTH, BOARD_HEIGHT, pieceX, pieceY);
-//    delete currentPiece;
 }
