@@ -111,6 +111,9 @@ void main()
             || ourColor == vec3(0.0, 0.0, 0.0)) {
         // borders and empty locations
         FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+    } else if (ourColor == vec3(1.0, 1.0, 1.0)) {
+        // transparent locations on pieces
+        FragColor = vec4(0.0, 0.0, 0.0, 0.0);
     } else {
         // locations with cubes
         col = ourColor;

@@ -5,7 +5,7 @@
 
 float startX, startY;
 
-float color [8 /*colors*/][4 /*rgb*/] =
+float color [9 /*colors*/][3 /*rgb*/] =
         {
                 // Empty
                 {0.0, 0.0, 0.0},
@@ -23,6 +23,8 @@ float color [8 /*colors*/][4 /*rgb*/] =
                 {0.0, 1.0, 0.0},
                 // T
                 {1.0, 0.0, 1.0},
+                // Transparent
+                {1.0, 1.0, 1.0},
         };
 
 void drawBoard(float *vertices) {
