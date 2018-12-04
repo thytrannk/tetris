@@ -22,7 +22,7 @@ void Game::Loop() {
     while (!invalid() && !glfwWindowShouldClose(window)) {
         int furthestBottom;
         currentPiece->furthestBottom(BOARD_WIDTH, BOARD_HEIGHT, furthestBottom);
-        render(vertexSource, fragmentSource, window);
+        render();
         sleep_for(TIME);
         pieceY--;
 

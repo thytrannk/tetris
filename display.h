@@ -5,6 +5,6 @@
 #include <GLFW/glfw3.h>
 
 extern float startX, startY;
-void render(const char *vertexSource, const char *fragmentSource, GLFWwindow* window);
+void render();
 
 #endif //TETRIS_DISPLAY_H

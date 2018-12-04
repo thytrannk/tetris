@@ -1,8 +1,8 @@
 #ifndef TETRIS_BOARD_H
 #define TETRIS_BOARD_H
 
-#define BOARD_HEIGHT 20
-#define BOARD_WIDTH 12
+#define BOARD_HEIGHT 12
+#define BOARD_WIDTH 8
 
 class Board {
 public:

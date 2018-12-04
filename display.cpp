@@ -99,6 +99,88 @@ void drawBoard(float *vertices) {
     }
 }
 
+void getBoardVertices(float *vertices) {
+    startX = -BOARD_WIDTH / 2.0f * CUBE_SIZE_X;
+    startY = -BOARD_HEIGHT / 2.0f * CUBE_SIZE_Y;
+    for (int i = 0; i < BOARD_HEIGHT; i++) {
+        for (int j = 0; j < BOARD_WIDTH; j++) {
+            // bottom left vertex
+            // vertex[j][i].x
+            vertices[12 * (i * BOARD_WIDTH + j)] = startX + j * CUBE_SIZE_X;
+            // vertex[j][i].y
+            vertices[12 * (i * BOARD_WIDTH + j) + 1] = startY + i * CUBE_SIZE_Y;
+            // vertex[j][i].z
+            vertices[12 * (i * BOARD_WIDTH + j) + 2] = 0.0;
+
+            // bottom right vertex
+            // vertex[j][i].x
+            vertices[12 * (i * BOARD_WIDTH + j) + 3] = startX + (j + 1) * CUBE_SIZE_X - EPSILON;
+            // vertex[j][i].y
+            vertices[12 * (i * BOARD_WIDTH + j) + 4] = startY + i * CUBE_SIZE_Y;
+            // vertex[j][i].z
+            vertices[12 * (i * BOARD_WIDTH + j) + 5] = 0.0;
+
+            // top right vertex
+            // vertex[j][i].x
+            vertices[12 * (i * BOARD_WIDTH + j) + 6] = startX + (j + 1) * CUBE_SIZE_X - EPSILON;
+            // vertex[j][i].y
+            vertices[12 * (i * BOARD_WIDTH + j) + 7] = startY + (i + 1) * CUBE_SIZE_Y - EPSILON;
+            // vertex[j][i].z
+            vertices[12 * (i * BOARD_WIDTH + j) + 8] = 0.0;
+
+            // top left vertex
+            // vertex[j][i].x
+            vertices[12 * (i * BOARD_WIDTH + j) + 9] = startX + j * CUBE_SIZE_X;
+            // vertex[j][i].y
+            vertices[12 * (i * BOARD_WIDTH + j) + 10] = startY + (i + 1) * CUBE_SIZE_Y - EPSILON;
+            // vertex[j][i].z
+            vertices[12 * (i * BOARD_WIDTH + j) + 11] = 0.0;
+        }
+
+    }
+}
+
+void getBoardColor(float *vertices) {
+    startX = -BOARD_WIDTH / 2.0f * CUBE_SIZE_X;
+    startY = -BOARD_HEIGHT / 2.0f * CUBE_SIZE_Y;
+    for (int i = 0; i < BOARD_HEIGHT; i++) {
+        for (int j = 0; j < BOARD_WIDTH; j++) {
+            // bottom left vertex
+            // vertex[j][i].r
+            vertices[12 * (i * BOARD_WIDTH + j)] = color[game.board.value(j, i)][0];
+            // vertex[j][i].g
+            vertices[12 * (i * BOARD_WIDTH + j) + 1] = color[game.board.value(j, i)][1];
+            // vertex[j][i].b
+            vertices[12 * (i * BOARD_WIDTH + j) + 2] = color[game.board.value(j, i)][2];
+
+            // bottom right vertex
+            // vertex[j][i].r
+            vertices[12 * (i * BOARD_WIDTH + j) + 3] = color[game.board.value(j, i)][0];
+            // vertex[j][i].g
+            vertices[12 * (i * BOARD_WIDTH + j) + 4] = color[game.board.value(j, i)][1];
+            // vertex[j][i].b
+            vertices[12 * (i * BOARD_WIDTH + j) + 5] = color[game.board.value(j, i)][2];
+
+            // top right vertex
+            // vertex[j][i].r
+            vertices[12 * (i * BOARD_WIDTH + j) + 6] = color[game.board.value(j, i)][0];
+            // vertex[j][i].g
+            vertices[12 * (i * BOARD_WIDTH + j) + 7] = color[game.board.value(j, i)][1];
+            // vertex[j][i].b
+            vertices[12 * (i * BOARD_WIDTH + j) + 8] = color[game.board.value(j, i)][2];
+
+            // top left vertex
+            // vertex[j][i].r
+            vertices[12 * (i * BOARD_WIDTH + j) + 9] = color[game.board.value(j, i)][0];
+            // vertex[j][i].g
+            vertices[12 * (i * BOARD_WIDTH + j) + 10] = color[game.board.value(j, i)][1];
+            // vertex[j][i].b
+            vertices[12 * (i * BOARD_WIDTH + j) + 11] = color[game.board.value(j, i)][2];
+        }
+
+    }
+}
+
 void indexVertices(unsigned int *ind) {
     for (int i = 0; i < BOARD_HEIGHT; i++) {
         for (int j = 0; j < BOARD_WIDTH; j++) {
@@ -188,7 +270,7 @@ void indexPiece(unsigned int *ind) {
     }
 }
 
-void render(const char *vertexSource, const char *fragmentSource, GLFWwindow* window) {
+void render() {
     // build and compile our shader program
     // ------------------------------------
     Shader ourShader(vertexSource, fragmentSource);
@@ -200,7 +282,39 @@ void render(const char *vertexSource, const char *fragmentSource, GLFWwindow* wi
 
     int numVertices = BOARD_HEIGHT * BOARD_WIDTH * 4;
     auto *vertices = new float[numVertices * 6];
+    auto *vertices2 = new float[numVertices * 6];
+    auto *position = new float[numVertices * 3];
+    auto *colors = new float[numVertices * 3];
     drawBoard(vertices);
+    getBoardVertices(position);
+    getBoardColor(colors);
+
+    for (int i = 0; i < numVertices; i++) {
+        vertices2[6 * i] = position[3 * i];
+        vertices2[6 * i + 1] = position[3 * i + 1];
+        vertices2[6 * i + 2] = position[3 * i + 2];
+        vertices2[6 * i + 3] = colors[3 * i];
+        vertices2[6 * i + 4] = colors[3 * i + 1];
+        vertices2[6 * i + 5] = colors[3 * i + 2];
+    }
+
+//    cout << endl << "vertices : ";
+//    for (int i = 0; i < numVertices; i++) {
+//        cout << endl << "vertex" << i;
+//        cout << endl << "vertices : ";
+//        for (int j = 0; j < 6; j++) {
+//            cout << vertices[i * numVertices + j] << ";";
+//        }
+//        cout << endl << "vertices2: ";
+//        for (int j = 0; j < 6; j++) {
+//            cout << vertices2[i * numVertices + j] << ";";
+//        }
+//    }
+
+
+    delete[] position;
+    delete[] colors;
+    delete[] vertices;
 
     int numTriangles = BOARD_WIDTH * BOARD_HEIGHT * 2;
     auto *indices = new unsigned int[numTriangles * 3];
@@ -214,12 +328,12 @@ void render(const char *vertexSource, const char *fragmentSource, GLFWwindow* wi
     glBindVertexArray(VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * numVertices * 6, vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * numVertices * 6, vertices2, GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * numTriangles * 3, indices, GL_STATIC_DRAW);
 
-    delete[] vertices;
+    delete[] vertices2;
     delete[] indices;
     // position attribute
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
