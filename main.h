@@ -5,8 +5,8 @@
 #include <GLFW/glfw3.h>
 #include "game.h"
 
-const float CUBE_SIZE_X = 0.1;
-const float CUBE_SIZE_Y = 0.1;
+const float CUBE_SIZE_X = 0.07;
+const float CUBE_SIZE_Y = 0.07;
 
 extern const char vertexSource[];
 extern const char fragmentSource[];

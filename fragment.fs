@@ -139,7 +139,8 @@ void main() {
     }
     if (ourColor == vec3(1.0, 1.0, 1.0)
         || x > boardWidth - 1 || x < 0
-        || y > boardHeight - 1 || y < 0) {
+        || y > boardHeight - 1 || y < 0
+        ) {
         // transparent locations on pieces
         FragColor = vec4(0.0, 0.0, 0.0, 0.0);
     }

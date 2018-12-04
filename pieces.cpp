@@ -233,28 +233,7 @@ Pieces::Pieces(int id) {
 void Pieces::StartLocation(int boardWidth, int boardHeight, int &x, int &y) {
     // save the starting point board coordinates of a piece
     x = boardWidth / 2 - 2;
-    if (pieceID == 0) {
-        // square
-        y = boardHeight - 3;
-    } else if (pieceID == 1) {
-        // I
-        y = boardHeight - 3;
-    } else if (pieceID == 2) {
-        // L
-        y = boardHeight - 4;
-    } else if (pieceID == 3) {
-        // L mirrored
-        y = boardHeight - 4;
-    } else if (pieceID == 4) {
-        // Z
-        y = boardHeight - 4;
-    } else if (pieceID == 5) {
-        // S
-        y = boardHeight - 4;
-    } else {
-        // T
-        y = boardHeight - 4;
-    }
+    furthestTop(boardWidth, boardHeight, y);
 }
 
 //float piecesColor [7 /*kind*/] =
@@ -281,4 +260,54 @@ int Pieces::pieceValue(int x, int y) {
 //    cout << "rotation=" << rotation << endl;
 //    cout << "piecesCode[pieceID][rotation][x][y]" << piecesCode[pieceID][rotation][x][y] << endl;
 //    return 2;
+}
+
+void Pieces::furthestBottom(int boardWidth, int boardHeight, int &y){
+    if (pieceID == 0) {
+        // square
+        y = -1;
+    } else if (pieceID == 1) {
+        // I
+        y = -2;
+    } else if (pieceID == 2) {
+        // L
+        y = -1;
+    } else if (pieceID == 3) {
+        // L mirrored
+        y = -1;
+    } else if (pieceID == 4) {
+        // Z
+        y = -1;
+    } else if (pieceID == 5) {
+        // S
+        y = -1;
+    } else {
+        // T
+        y = -1;
+    }
+}
+
+void Pieces::furthestTop(int boardWidth, int boardHeight, int &y) {
+    if (pieceID == 0) {
+        // square
+        y = boardHeight - 3;
+    } else if (pieceID == 1) {
+        // I
+        y = boardHeight - 3;
+    } else if (pieceID == 2) {
+        // L
+        y = boardHeight - 4;
+    } else if (pieceID == 3) {
+        // L mirrored
+        y = boardHeight - 4;
+    } else if (pieceID == 4) {
+        // Z
+        y = boardHeight - 4;
+    } else if (pieceID == 5) {
+        // S
+        y = boardHeight - 4;
+    } else {
+        // T
+        y = boardHeight - 4;
+    }
 }

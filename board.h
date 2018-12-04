@@ -1,14 +1,14 @@
 #ifndef TETRIS_BOARD_H
 #define TETRIS_BOARD_H
 
-#define BOARD_HEIGHT 5
-#define BOARD_WIDTH 7
+#define BOARD_HEIGHT 20
+#define BOARD_WIDTH 12
 
 class Board {
 public:
     Board ();
     int value(int x, int y);
-
+    void assign(int x, int y, int val);
 private:
     int board[BOARD_WIDTH][BOARD_HEIGHT];
     void deleteLine(int y);

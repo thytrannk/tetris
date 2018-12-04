@@ -272,39 +272,37 @@ void render(const char *vertexSource, const char *fragmentSource, GLFWwindow* wi
     glBindVertexArray(0);
     // render loop
     // -----------
-    while (!glfwWindowShouldClose(window))
-    {
-        // input
-        // -----
-        processInput(window);
 
-        // render
-        // ------
-        glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+    // input
+    // -----
+    processInput(window);
 
-        ourShader.use();
-        ourShader.setFloat("startX", startX);
-        ourShader.setFloat("startY", startY);
-        ourShader.setFloat("cubeSizeX", CUBE_SIZE_X);
-        ourShader.setFloat("cubeSizeY", CUBE_SIZE_Y);
-        ourShader.setInt("boardWidth", BOARD_WIDTH);
-        ourShader.setInt("boardHeight", BOARD_HEIGHT);
+    // render
+    // ------
+    glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
 
-        // draw board
-        glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
-        glDrawElements(GL_TRIANGLES, numTriangles * 3, GL_UNSIGNED_INT, 0);
+    ourShader.use();
+    ourShader.setFloat("startX", startX);
+    ourShader.setFloat("startY", startY);
+    ourShader.setFloat("cubeSizeX", CUBE_SIZE_X);
+    ourShader.setFloat("cubeSizeY", CUBE_SIZE_Y);
+    ourShader.setInt("boardWidth", BOARD_WIDTH);
+    ourShader.setInt("boardHeight", BOARD_HEIGHT);
 
-        // draw piece
-        glBindVertexArray(VAO2);
-        glDrawElements(GL_TRIANGLES, pcNumTriangles * 3, GL_UNSIGNED_INT, 0);
-        glBindVertexArray(0); // no need to unbind it every time
+    // draw board
+    glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
+    glDrawElements(GL_TRIANGLES, numTriangles * 3, GL_UNSIGNED_INT, 0);
 
-        // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-        // -------------------------------------------------------------------------------
-        glfwSwapBuffers(window);
-        glfwPollEvents();
-    }
+    // draw piece
+    glBindVertexArray(VAO2);
+    glDrawElements(GL_TRIANGLES, pcNumTriangles * 3, GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0); // no need to unbind it every time
+
+    // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
+    // -------------------------------------------------------------------------------
+    glfwSwapBuffers(window);
+    glfwPollEvents();
 
     // optional: de-allocate all resources once they've outlived their purpose:
     // ------------------------------------------------------------------------

@@ -13,7 +13,7 @@ public:
     int pieceY; // y coordinate of the bottom left corner of piece matrix
 private:
     void generatePiece();
-    bool gameOver();
+    bool invalid();
 };
 
 
