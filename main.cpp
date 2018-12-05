@@ -1,14 +1,12 @@
 #include <iostream>
 #include <glad/glad.h>
+#include "global.h"
 #include "main.h"
 
 using namespace std;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
-
-const unsigned int SCR_WIDTH = 600;
-const unsigned int SCR_HEIGHT = 600;
 
 Game game;
 GLFWwindow *window;

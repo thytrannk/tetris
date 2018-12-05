@@ -7,6 +7,7 @@
 #include "game.h"
 #include "main.h"
 #include "display.h"
+#include "global.h"
 #include "shader.h"
 #include <iostream>
 
@@ -15,8 +16,6 @@ using namespace irrklang;
 using namespace std::this_thread;     // sleep_for, sleep_until
 using namespace std::chrono_literals; // ns, us, ms, s, h, etc.
 using std::chrono::system_clock;
-
-#define TIME 0.5s
 
 random_device rd;
 mt19937 mt(rd());

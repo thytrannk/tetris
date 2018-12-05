@@ -1,28 +1,27 @@
 #include <iostream>
 #include <FreeImage.h>
 #include "display.h"
+#include "global.h"
 #include "shader.h"
 #include "main.h"
 
 using namespace std;
 
-#define EPSILON 0.0001f;
-
 void processInput(GLFWwindow *window);
 
 float startX, startY;
 float pcStartX, pcStartY;
-const char vertexSource[] = "../vertex.vs";
-const char fragmentSource[] = "../fragment.fs";
-const char vertexBackground[] = "../vertexBackground.vs";
-const char fragmentBackground[] = "../fragmentBackground.fs";
 unsigned int VBO_boardPositions, VAO_board, EBO_board;
 unsigned int VBO_background, VAO_background, EBO_background;
 unsigned int texture;
 int imageSizeX, imageSizeY, image_nChannel;
 BYTE *image;
+
+const char vertexSource[] = "../vertex.vs";
+const char fragmentSource[] = "../fragment.fs";
+const char vertexBackground[] = "../vertexBackground.vs";
+const char fragmentBackground[] = "../fragmentBackground.fs";
 const char backgroundFile[] = "../background.jpg";
-//const char backgroundFile[] = "../red.jpg";
 
 float color [9 /*colors*/][3 /*rgb*/] =
         {

@@ -1,7 +1,4 @@
 #include "pieces.h"
-#include <iostream>
-
-using namespace std;
 
 int piecesCode [7 /*kind */ ][4 /* rotation */ ][5 /* horizontal blocks */ ][5 /* vertical blocks */ ] =
         {

@@ -12,7 +12,6 @@ public:
     int pieceX; // x coordinate of the bottom left corner of piece matrix
     int pieceY; // y coordinate of the bottom left corner of piece matrix
 private:
-//    void (Game::*pt2fallPiece)(int);
     void generatePiece();
     bool invalid();
     void saveBoard(void);
