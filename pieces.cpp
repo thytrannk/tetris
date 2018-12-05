@@ -308,3 +308,35 @@ void Pieces::furthestTop(int boardWidth, int boardHeight, int &y) {
         y = boardHeight - 4;
     }
 }
+
+void Pieces::furthestLeft(int boardWidth, int boardHeight, int &x) {
+    if (pieceID == 0) {
+        // square
+        x = boardWidth - 2;
+    } else if (pieceID == 1) {
+        // I
+        if (rotation == 0) {
+            x = boardWidth - 1;
+        } else if (rotation == 1) {
+            x = boardWidth - 2;
+        } else if (rotation == 2) {
+            x = boardWidth;
+        } else if (rotation == 3) {
+            x = boardWidth - 2;
+        }
+    } else if (pieceID == 2 || pieceID == 3) {
+        // L or L mirrored
+        if (rotation == 2) {
+            x = boardHeight - 2;
+        } else {
+            x = boardHeight - 1;
+        }
+    } else {
+        // Z or S or T
+        if (rotation == 0) {
+            x = boardHeight - 2;
+        } else {
+            x = boardHeight - 1;
+        }
+    }
+}

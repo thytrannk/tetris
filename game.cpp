@@ -39,10 +39,11 @@ void Game::Loop() {
         dummyRender();
     #endif
     while (!invalid() && !glfwWindowShouldClose(window)) {
-        int furthestBottom;
-        currentPiece->furthestBottom(BOARD_WIDTH, BOARD_HEIGHT, furthestBottom);
-        render(gameShader, backgroundShader);
-        fallPiece(furthestBottom);
+        for (int i = 0; i < 5; i++) {
+            render(gameShader, backgroundShader);
+            sleep_for(TIME);
+        }
+        pieceDown();
     }
     while (invalid()) {
         pieceY++;
@@ -60,9 +61,11 @@ void Game::Loop() {
     glDeleteBuffers(1, &EBO_background);
 }
 
-void Game::fallPiece(int furthestBottom) {
-    sleep_for(TIME);
+void Game::pieceDown() {
     pieceY--;
+
+    int furthestBottom;
+    currentPiece->furthestBottom(BOARD_WIDTH, BOARD_HEIGHT, furthestBottom);
 
     if (invalid() || pieceY < furthestBottom) {
         // reach the bottom
