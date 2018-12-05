@@ -41,9 +41,7 @@ void Game::Loop() {
     }
     while (invalid()) {
         pieceY++;
-        cout << "y=" << pieceY << endl;
     }
-    cout << "ID=" << currentPiece->pieceID << endl;
     render(gameShader, backgroundShader);
     cout << "Game Over!" << endl;
     delete currentPiece;
