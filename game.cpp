@@ -31,7 +31,6 @@ void Game::Loop() {
         int furthestBottom;
         currentPiece->furthestBottom(BOARD_WIDTH, BOARD_HEIGHT, furthestBottom);
         render(ourShader);
-        sleep_for(TIME);
         fallPiece(furthestBottom);
     }
     cout << "Game Over!" << endl;
@@ -42,6 +41,7 @@ void Game::Loop() {
 }
 
 void Game::fallPiece(int furthestBottom) {
+    sleep_for(TIME);
     pieceY--;
 
     if (invalid() || pieceY < furthestBottom) {

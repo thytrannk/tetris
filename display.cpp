@@ -210,7 +210,7 @@ void bindBoardVertices() {
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
 
-    // Bind vertices positions and indices
+    // Bind board vertices positions and indices
 
     int numVertices = BOARD_HEIGHT * BOARD_WIDTH * 4;
     auto *positions = new float[numVertices * 3];
@@ -250,6 +250,7 @@ Shader compileShader() {
 
 void render(Shader ourShader) {
 
+    // Bind board vertices colors
     unsigned int VBO_c;
     int numVertices = BOARD_HEIGHT * BOARD_WIDTH * 4;
     int numTriangles = BOARD_WIDTH * BOARD_HEIGHT * 2;
@@ -276,7 +277,7 @@ void render(Shader ourShader) {
 
     delete[] colors;
 
-    // Draw the current piece
+    // Bind piece vertices position, colors and indices
     int pcNumVertices = 5 * 5 * 4;
     auto *vertices = new float[pcNumVertices * 6];
     drawPiece(vertices);
