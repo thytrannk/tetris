@@ -7,8 +7,8 @@
 #define BOARD_HEIGHT 30
 #define BOARD_WIDTH 10
 
-#define CUBE_SIZE_X 0.05
-#define CUBE_SIZE_Y 0.05
+#define CUBE_SIZE_X 0.05f
+#define CUBE_SIZE_Y 0.05f
 
 #define TIME_SHORT 0.05s
 #define TIME_LONG 0.5s

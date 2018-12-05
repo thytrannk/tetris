@@ -23,7 +23,7 @@ const char vertexBackground[] = "../vertexBackground.vs";
 const char fragmentBackground[] = "../fragmentBackground.fs";
 const char backgroundFile[] = "../background.jpg";
 
-float color [9 /*colors*/][3 /*rgb*/] =
+float color [10 /*colors*/][3 /*rgb*/] =
         {
                 // Empty
                 {0.0, 0.0, 0.0},
@@ -43,6 +43,8 @@ float color [9 /*colors*/][3 /*rgb*/] =
                 {1.0, 0.0, 1.0},
                 // Transparent
                 {1.0, 1.0, 1.0},
+                // Ghost
+                {0.3, 0.3, 0.3},
         };
 
 void getBoardVertices(float *vertices) {
@@ -140,9 +142,13 @@ void indexVertices(unsigned int *ind) {
     }
 }
 
-void drawPiece(float *vertices) {
+void drawPiece(float *vertices, bool ghost) {
     pcStartX = startX + game.pieceX * CUBE_SIZE_X;
-    pcStartY = startY + game.pieceY * CUBE_SIZE_Y;
+    if (ghost) {
+        pcStartY = startY + game.ghostY * CUBE_SIZE_Y;
+    } else {
+        pcStartY = startY + game.pieceY * CUBE_SIZE_Y;
+    }
     for (int i = 0; i < 5; i++) {
         for (int j = 0; j < 5; j++) {
             // bottom left vertex
@@ -152,12 +158,6 @@ void drawPiece(float *vertices) {
             vertices[24 * (i * 5 + j) + 1] = pcStartY + i * CUBE_SIZE_Y;
             // vertex[j][i].z
             vertices[24 * (i * 5 + j) + 2] = 0.0;
-            // vertex[j][i].r
-            vertices[24 * (i * 5 + j) + 3] = color[(game.currentPiece)->pieceValue(j, i)][0];
-            // vertex[j][i].g
-            vertices[24 * (i * 5 + j) + 4] = color[game.currentPiece->pieceValue(j, i)][1];
-            // vertex[j][i].b
-            vertices[24 * (i * 5 + j) + 5] = color[game.currentPiece->pieceValue(j, i)][2];
 
             // bottom right vertex
             // vertex[j][i].x
@@ -166,12 +166,7 @@ void drawPiece(float *vertices) {
             vertices[24 * (i * 5 + j) + 7] = pcStartY + i * CUBE_SIZE_Y;
             // vertex[j][i].z
             vertices[24 * (i * 5 + j) + 8] = 0.0;
-            // vertex[j][i].r
-            vertices[24 * (i * 5 + j) + 9] = color[game.currentPiece->pieceValue(j, i)][0];
-            // vertex[j][i].g
-            vertices[24 * (i * 5 + j) + 10] = color[game.currentPiece->pieceValue(j, i)][1];
-            // vertex[j][i].b
-            vertices[24 * (i * 5 + j) + 11] = color[game.currentPiece->pieceValue(j, i)][2];
+
             // top right vertex
             // vertex[j][i].x
             vertices[24 * (i * 5 + j) + 12] = pcStartX + (j + 1) * CUBE_SIZE_X - EPSILON;
@@ -179,12 +174,7 @@ void drawPiece(float *vertices) {
             vertices[24 * (i * 5 + j) + 13] = pcStartY + (i + 1) * CUBE_SIZE_Y - EPSILON;
             // vertex[j][i].z
             vertices[24 * (i * 5 + j) + 14] = 0.0;
-            // vertex[j][i].r
-            vertices[24 * (i * 5 + j) + 15] = color[game.currentPiece->pieceValue(j, i)][0];
-            // vertex[j][i].g
-            vertices[24 * (i * 5 + j) + 16] = color[game.currentPiece->pieceValue(j, i)][1];
-            // vertex[j][i].b
-            vertices[24 * (i * 5 + j) + 17] = color[game.currentPiece->pieceValue(j, i)][2];
+
             // top left vertex
             // vertex[j][i].x
             vertices[24 * (i * 5 + j) + 18] = pcStartX + j * CUBE_SIZE_X;
@@ -192,12 +182,106 @@ void drawPiece(float *vertices) {
             vertices[24 * (i * 5 + j) + 19] = pcStartY + (i + 1) * CUBE_SIZE_Y - EPSILON;
             // vertex[j][i].z
             vertices[24 * (i * 5 + j) + 20] = 0.0;
-            // vertex[j][i].r
-            vertices[24 * (i * 5 + j) + 21] = color[game.currentPiece->pieceValue(j, i)][0];
-            // vertex[j][i].g
-            vertices[24 * (i * 5 + j) + 22] = color[game.currentPiece->pieceValue(j, i)][1];
-            // vertex[j][i].b
-            vertices[24 * (i * 5 + j) + 23] = color[game.currentPiece->pieceValue(j, i)][2];
+
+            if (ghost) {
+                if (game.currentPiece->pieceValue(j, i) != 8) {
+                    // bottom left vertex
+                    // vertex[j][i].r
+                    vertices[24 * (i * 5 + j) + 3] = color[9][0];
+                    // vertex[j][i].g
+                    vertices[24 * (i * 5 + j) + 4] = color[9][1];
+                    // vertex[j][i].b
+                    vertices[24 * (i * 5 + j) + 5] = color[9][2];
+
+                    // bottom right vertex
+                    // vertex[j][i].r
+                    vertices[24 * (i * 5 + j) + 9] = color[9][0];
+                    // vertex[j][i].g
+                    vertices[24 * (i * 5 + j) + 10] = color[9][1];
+                    // vertex[j][i].b
+                    vertices[24 * (i * 5 + j) + 11] = color[9][2];
+
+                    // top right vertex
+                    // vertex[j][i].r
+                    vertices[24 * (i * 5 + j) + 15] = color[9][0];
+                    // vertex[j][i].g
+                    vertices[24 * (i * 5 + j) + 16] = color[9][1];
+                    // vertex[j][i].b
+                    vertices[24 * (i * 5 + j) + 17] = color[9][2];
+
+                    // top left vertex
+                    // vertex[j][i].r
+                    vertices[24 * (i * 5 + j) + 21] = color[9][0];
+                    // vertex[j][i].g
+                    vertices[24 * (i * 5 + j) + 22] = color[9][1];
+                    // vertex[j][i].b
+                    vertices[24 * (i * 5 + j) + 23] = color[9][2];
+                } else {
+                    // bottom left vertex
+                    // vertex[j][i].r
+                    vertices[24 * (i * 5 + j) + 3] = color[8][0];
+                    // vertex[j][i].g
+                    vertices[24 * (i * 5 + j) + 4] = color[8][1];
+                    // vertex[j][i].b
+                    vertices[24 * (i * 5 + j) + 5] = color[8][2];
+
+                    // bottom right vertex
+                    // vertex[j][i].r
+                    vertices[24 * (i * 5 + j) + 9] = color[8][0];
+                    // vertex[j][i].g
+                    vertices[24 * (i * 5 + j) + 10] = color[8][1];
+                    // vertex[j][i].b
+                    vertices[24 * (i * 5 + j) + 11] = color[8][2];
+
+                    // top right vertex
+                    // vertex[j][i].r
+                    vertices[24 * (i * 5 + j) + 15] = color[8][0];
+                    // vertex[j][i].g
+                    vertices[24 * (i * 5 + j) + 16] = color[8][1];
+                    // vertex[j][i].b
+                    vertices[24 * (i * 5 + j) + 17] = color[8][2];
+
+                    // top left vertex
+                    // vertex[j][i].r
+                    vertices[24 * (i * 5 + j) + 21] = color[8][0];
+                    // vertex[j][i].g
+                    vertices[24 * (i * 5 + j) + 22] = color[8][1];
+                    // vertex[j][i].b
+                    vertices[24 * (i * 5 + j) + 23] = color[8][2];
+                }
+            } else {
+                // bottom left vertex
+                // vertex[j][i].r
+                vertices[24 * (i * 5 + j) + 3] = color[(game.currentPiece)->pieceValue(j, i)][0];
+                // vertex[j][i].g
+                vertices[24 * (i * 5 + j) + 4] = color[game.currentPiece->pieceValue(j, i)][1];
+                // vertex[j][i].b
+                vertices[24 * (i * 5 + j) + 5] = color[game.currentPiece->pieceValue(j, i)][2];
+
+                // bottom right vertex
+                // vertex[j][i].r
+                vertices[24 * (i * 5 + j) + 9] = color[game.currentPiece->pieceValue(j, i)][0];
+                // vertex[j][i].g
+                vertices[24 * (i * 5 + j) + 10] = color[game.currentPiece->pieceValue(j, i)][1];
+                // vertex[j][i].b
+                vertices[24 * (i * 5 + j) + 11] = color[game.currentPiece->pieceValue(j, i)][2];
+
+                // top right vertex
+                // vertex[j][i].r
+                vertices[24 * (i * 5 + j) + 15] = color[game.currentPiece->pieceValue(j, i)][0];
+                // vertex[j][i].g
+                vertices[24 * (i * 5 + j) + 16] = color[game.currentPiece->pieceValue(j, i)][1];
+                // vertex[j][i].b
+                vertices[24 * (i * 5 + j) + 17] = color[game.currentPiece->pieceValue(j, i)][2];
+
+                // top left vertex
+                // vertex[j][i].r
+                vertices[24 * (i * 5 + j) + 21] = color[game.currentPiece->pieceValue(j, i)][0];
+                // vertex[j][i].g
+                vertices[24 * (i * 5 + j) + 22] = color[game.currentPiece->pieceValue(j, i)][1];
+                // vertex[j][i].b
+                vertices[24 * (i * 5 + j) + 23] = color[game.currentPiece->pieceValue(j, i)][2];
+            }
         }
 
     }
@@ -380,15 +464,48 @@ void render(Shader gameShader, Shader backgroundShader) {
 
     delete[] colors;
 
-    // Bind piece vertices position, colors and indices
+    // Create piece and ghost vertices position, colors and indices
     int pcNumVertices = 5 * 5 * 4;
     auto *vertices = new float[pcNumVertices * 6];
-    drawPiece(vertices);
+    drawPiece(vertices, false);
+    auto *ghost = new float[pcNumVertices * 6];
+    drawPiece(ghost, true);
     int pcNumTriangles = 5 * 5 * 2;
     auto *indices = new unsigned int[pcNumTriangles * 3];
     indexPiece(indices);
 
-    unsigned int VBO_piece, VAO_piece, EBO_piece;
+    unsigned int VBO_piece, VAO_piece, EBO_piece, VBO_ghost, VAO_ghost;
+
+    // bind vertex array for ghost
+
+    glGenVertexArrays(1, &VAO_ghost);
+    glGenBuffers(1, &VBO_ghost);
+    glGenBuffers(1, &EBO_piece);
+    // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
+    glBindVertexArray(VAO_ghost);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO_ghost);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * pcNumVertices * 6, ghost, GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_piece);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * pcNumTriangles * 3, indices, GL_STATIC_DRAW);
+
+    // position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    // color attribute
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3* sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
+    // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
+    glBindVertexArray(0);
+
+    // bind vertex array for piece
+
     glGenVertexArrays(1, &VAO_piece);
     glGenBuffers(1, &VBO_piece);
     glGenBuffers(1, &EBO_piece);
@@ -416,6 +533,7 @@ void render(Shader gameShader, Shader backgroundShader) {
     glBindVertexArray(0);
 
     delete[] vertices;
+    delete[] ghost;
     delete[] indices;
 
 
@@ -428,7 +546,6 @@ void render(Shader gameShader, Shader backgroundShader) {
 
     // render
     // ------
-//    glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
     // bind Texture
@@ -451,6 +568,10 @@ void render(Shader gameShader, Shader backgroundShader) {
     glBindVertexArray(VAO_board); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
     glDrawElements(GL_TRIANGLES, numTriangles * 3, GL_UNSIGNED_INT, 0);
 
+    // draw ghost
+    glBindVertexArray(VAO_ghost);
+    glDrawElements(GL_TRIANGLES, pcNumTriangles * 3, GL_UNSIGNED_INT, 0);
+
     // draw piece
     glBindVertexArray(VAO_piece);
     glDrawElements(GL_TRIANGLES, pcNumTriangles * 3, GL_UNSIGNED_INT, 0);
@@ -465,6 +586,8 @@ void render(Shader gameShader, Shader backgroundShader) {
     glDeleteBuffers(1, &VBO_boardColors);
     glDeleteVertexArrays(1, &VAO_piece);
     glDeleteBuffers(1, &VBO_piece);
+    glDeleteVertexArrays(1, &VAO_ghost);
+    glDeleteBuffers(1, &VBO_ghost);
     glDeleteBuffers(1, &EBO_piece);
 }
 
