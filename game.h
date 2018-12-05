@@ -12,11 +12,13 @@ public:
     Pieces *currentPiece;
     int pieceX; // x coordinate of the bottom left corner of piece matrix
     int pieceY; // y coordinate of the bottom left corner of piece matrix
+    int ghostY;
     void pieceDown(bool autoFall);
     void pieceHardFall();
 private:
     void generatePiece();
-    bool invalid();
+    void calcGhost();
+    bool invalid(bool ghost);
     void saveBoard(void);
 };
 

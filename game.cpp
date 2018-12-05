@@ -45,14 +45,20 @@ void Game::Loop() {
     #ifdef __APPLE__
         dummyRender();
     #endif
-    while (!game_over && !glfwWindowShouldClose(window)) {
+    while (1) {
         for (int i = 0; i < 10; i++) {
-            render(gameShader, backgroundShader);
-            sleep_for(TIME_SHORT);
+            if (!game_over && !glfwWindowShouldClose(window)) {
+                render(gameShader, backgroundShader);
+                sleep_for(TIME_SHORT);
+            } else {
+                goto over;
+            }
         }
         pieceDown(true);
     }
-    while (invalid()) {
+
+over:
+    while (invalid(false)) {
         pieceY++;
     }
     render(gameShader, backgroundShader);
@@ -75,7 +81,7 @@ void Game::pieceDown(bool autoFall) {
         int furthestBottom;
         currentPiece->furthestBottom(BOARD_WIDTH, BOARD_HEIGHT, furthestBottom);
 
-        if (invalid() || pieceY < furthestBottom) {
+        if (invalid(false) || pieceY < furthestBottom) {
             // reach the bottom
             pieceY++;
             SoundEngine->play2D(pieceLock, false);
@@ -85,7 +91,7 @@ void Game::pieceDown(bool autoFall) {
             sleep_for(TIME_LONG);
             generatePiece();
             mtx.unlock();
-            if (invalid()) {
+            if (invalid(false)) {
                 game_over = true;
             }
         }
@@ -95,25 +101,21 @@ void Game::pieceDown(bool autoFall) {
     }
 }
 
+void Game::calcGhost() {
+    ghostY = pieceY;
+    int furthestBottom;
+    currentPiece->furthestBottom(BOARD_WIDTH, BOARD_HEIGHT, furthestBottom);
+    while (!invalid(true) && ghostY >= furthestBottom) {
+        ghostY--;
+    }
+
+    // reach the bottom
+    ghostY++;
+}
+
 void Game::pieceHardFall() {
     if (!game_over) {
-        int furthestBottom;
-        currentPiece->furthestBottom(BOARD_WIDTH, BOARD_HEIGHT, furthestBottom);
-        while (!invalid() && !(pieceY < furthestBottom)) {
-            pieceY--;
-        }
-
-        // reach the bottom
-        pieceY++;
-
-//        saveBoard();
-//        delete currentPiece;
-//        SoundEngine->play2D(pieceLock, false);
-//        sleep_for(TIME_LONG);
-//        generatePiece();
-//        if (invalid()) {
-//            game_over = true;
-//        }
+        pieceY = ghostY;
     }
 }
 
@@ -128,14 +130,26 @@ void Game::saveBoard(void) {
     }
 }
 
-bool Game::invalid() {
+bool Game::invalid(bool ghost) {
+    // Returns true if the piece overlaps with a non-empty location of the board
+    // bool ghost: true if ghost piece, false if actual piece
+    // When the game is over, and the last piece is partially within the board but does not overlap any non-empty
+    // location on the board, the function returns false
+
+    int yy;
+    if (ghost) {
+        yy = ghostY;
+    } else {
+        yy = pieceY;
+    }
+
     for (int y = 0; y < 5; y++) {
         for (int x = 0; x < 5; x++) {
             int pieceCol = currentPiece->pieceValue(x, y);
             if (pieceCol != 8) {
-                if (x + pieceX <= BOARD_WIDTH - 1 && y + pieceY <= BOARD_HEIGHT - 1) {
-                    // Game has already been over, moving the piece up to render last frame
-                    int boardCol = board.value(x + pieceX, y + pieceY);
+                if (x + pieceX <= BOARD_WIDTH - 1 && y + yy <= BOARD_HEIGHT - 1) {
+                    // Piece within board
+                    int boardCol = board.value(x + pieceX, y + yy);
                     if (boardCol) {
                         return true;
                     }
@@ -151,4 +165,22 @@ void Game::generatePiece() {
     int pieceID = dist(mt);
     currentPiece = new Pieces(pieceID);
     currentPiece->StartLocation(BOARD_WIDTH, BOARD_HEIGHT, pieceX, pieceY);
+    calcGhost();
+    if (pieceID == 0) {
+        cout << "square" << endl;
+    } else if (pieceID == 0) {
+        cout << "square" << endl;
+    } else if (pieceID == 1) {
+        cout << "I" << endl;
+    } else if (pieceID == 2) {
+        cout << "L" << endl;
+    } else if (pieceID == 3) {
+        cout << "L-mirrored" << endl;
+    } else if (pieceID == 4) {
+        cout << "Z" << endl;
+    } else if (pieceID == 5) {
+        cout << "S" << endl;
+    } else if (pieceID == 6) {
+        cout << "T" << endl;
+    }
 }
