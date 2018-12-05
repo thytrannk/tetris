@@ -12,7 +12,8 @@ public:
     Pieces *currentPiece;
     int pieceX; // x coordinate of the bottom left corner of piece matrix
     int pieceY; // y coordinate of the bottom left corner of piece matrix
-    void pieceDown();
+    void pieceDown(bool autoFall);
+    void pieceHardFall();
 private:
     void generatePiece();
     bool invalid();

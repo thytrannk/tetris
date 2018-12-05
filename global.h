@@ -4,13 +4,13 @@
 #define SCR_WIDTH 600
 #define SCR_HEIGHT 600
 
-#define BOARD_HEIGHT 12
-#define BOARD_WIDTH 8
+#define BOARD_HEIGHT 30
+#define BOARD_WIDTH 10
 
-#define CUBE_SIZE_X 0.07
-#define CUBE_SIZE_Y 0.07
+#define CUBE_SIZE_X 0.05
+#define CUBE_SIZE_Y 0.05
 
-#define TIME_SHORT 0.1s
+#define TIME_SHORT 0.05s
 #define TIME_LONG 0.5s
 
 #define EPSILON 0.0001f

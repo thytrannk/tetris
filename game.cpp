@@ -46,11 +46,11 @@ void Game::Loop() {
         dummyRender();
     #endif
     while (!game_over && !glfwWindowShouldClose(window)) {
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 10; i++) {
             render(gameShader, backgroundShader);
             sleep_for(TIME_SHORT);
         }
-        pieceDown();
+        pieceDown(true);
     }
     while (invalid()) {
         pieceY++;
@@ -68,7 +68,7 @@ void Game::Loop() {
     glDeleteBuffers(1, &EBO_background);
 }
 
-void Game::pieceDown() {
+void Game::pieceDown(bool autoFall) {
     if (!game_over) {
         pieceY--;
 
@@ -87,7 +87,30 @@ void Game::pieceDown() {
                 game_over = true;
             }
         }
-        SoundEngine->play2D(pieceFall, false);
+        if (autoFall) {
+            SoundEngine->play2D(pieceFall, false);
+        }
+    }
+}
+
+void Game::pieceHardFall() {
+    if (!game_over) {
+        int furthestBottom;
+        currentPiece->furthestBottom(BOARD_WIDTH, BOARD_HEIGHT, furthestBottom);
+        while (!invalid() && !(pieceY < furthestBottom)) {
+            pieceY--;
+        }
+
+        // reach the bottom
+        pieceY++;
+//        saveBoard();
+//        delete currentPiece;
+//        SoundEngine->play2D(pieceLock, false);
+//        sleep_for(TIME_LONG);
+//        generatePiece();
+//        if (invalid()) {
+//            game_over = true;
+//        }
     }
 }
 
