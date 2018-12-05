@@ -9,8 +9,7 @@ link_directories($ENV{PROJECT_HOME}/glad/include)
 find_library(FREEIMAGE_LIBRARY freeimage)
 include_directories(freeimage)
 
-#find_library(CGLM_LIBRARY cglm)
-#include_directories(cglm)
+include_directories(include)
 
 add_executable(tetris main.cpp main.h
         glad.c shader.h
@@ -25,4 +24,6 @@ include_directories(${GLFW_INCLUDE_DIRS})
 target_link_libraries(tetris ${GLFW_LIBRARIES})
 target_link_libraries(tetris ${GLFW_STATIC_LIBRARIES})
 target_link_libraries(tetris freeimage)
-#target_link_libraries(tetris cglm)
+target_link_libraries(tetris ${CMAKE_SOURCE_DIR}/libirrklang.dylib)
+
+#

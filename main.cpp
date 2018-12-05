@@ -53,6 +53,10 @@ int main() {
 
     // glfw: terminate, clearing all previously allocated GLFW resources.
     // ------------------------------------------------------------------
+    while (!glfwWindowShouldClose(window)) {
+        glfwPollEvents();
+    }
+
     glfwTerminate();
 
     return 0;
