@@ -78,11 +78,13 @@ void Game::pieceDown(bool autoFall) {
         if (invalid() || pieceY < furthestBottom) {
             // reach the bottom
             pieceY++;
+            SoundEngine->play2D(pieceLock, false);
+            mtx.lock();
             saveBoard();
             delete currentPiece;
-            SoundEngine->play2D(pieceLock, false);
             sleep_for(TIME_LONG);
             generatePiece();
+            mtx.unlock();
             if (invalid()) {
                 game_over = true;
             }
@@ -103,6 +105,7 @@ void Game::pieceHardFall() {
 
         // reach the bottom
         pieceY++;
+
 //        saveBoard();
 //        delete currentPiece;
 //        SoundEngine->play2D(pieceLock, false);
