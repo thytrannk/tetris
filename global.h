@@ -20,4 +20,9 @@ extern const char vertexBackground[];
 extern const char fragmentBackground[];
 extern const char backgroundFile[];
 
+extern const char gameMusic[];
+extern const char pieceFall[];
+extern const char pieceLock[];
+extern const char gameOver[];
+
 #endif //TETRIS_GLOBAL_H

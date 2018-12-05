@@ -23,8 +23,13 @@ uniform_int_distribution<> dist(0.0, 6.0);
 
 ISoundEngine *SoundEngine = createIrrKlangDevice();
 
+const char gameMusic[] = "../audio/background.wav";
+const char pieceFall[] = "../audio/button.wav";
+const char pieceLock[] = "../audio/beep.wav";
+const char gameOver[] = "../audio/gameOver.wav";
+
 void Game::Loop() {
-    SoundEngine->play2D("../audio/background.wav", GL_FALSE);
+    ISound *game_Music = SoundEngine->play2D(gameMusic, true, false, true);
     Shader backgroundShader = compileShader(vertexBackground, fragmentBackground);
     generateBackground();
     Shader gameShader = compileShader(vertexSource, fragmentSource);
@@ -44,6 +49,8 @@ void Game::Loop() {
     }
     render(gameShader, backgroundShader);
     cout << "Game Over!" << endl;
+    game_Music->stop();
+    SoundEngine->play2D(gameOver, false);
     delete currentPiece;
     glDeleteVertexArrays(1, &VAO_board);
     glDeleteBuffers(1, &VBO_boardPositions);
@@ -62,11 +69,11 @@ void Game::fallPiece(int furthestBottom) {
         pieceY++;
         saveBoard();
         delete currentPiece;
-        SoundEngine->play2D("../audio/beep.wav", GL_FALSE);
+        SoundEngine->play2D(pieceLock, false);
         sleep_for(TIME);
         generatePiece();
     }
-    SoundEngine->play2D("../audio/button.wav", GL_FALSE);
+    SoundEngine->play2D(pieceFall, false);
 }
 
 void Game::saveBoard(void) {
