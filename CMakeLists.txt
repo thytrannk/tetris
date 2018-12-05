@@ -6,6 +6,9 @@ set(CMAKE_CXX_STANDARD 14)
 include_directories($ENV{PROJECT_HOME}/glad/include)
 link_directories($ENV{PROJECT_HOME}/glad/include)
 
+find_library(FREEIMAGE_LIBRARY freeimage)
+include_directories(freeimage)
+
 #find_library(CGLM_LIBRARY cglm)
 #include_directories(cglm)
 
@@ -21,4 +24,5 @@ pkg_search_module(GLFW REQUIRED glfw3)
 include_directories(${GLFW_INCLUDE_DIRS})
 target_link_libraries(tetris ${GLFW_LIBRARIES})
 target_link_libraries(tetris ${GLFW_STATIC_LIBRARIES})
+target_link_libraries(tetris freeimage)
 #target_link_libraries(tetris cglm)

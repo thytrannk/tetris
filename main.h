@@ -8,8 +8,6 @@
 const float CUBE_SIZE_X = 0.07;
 const float CUBE_SIZE_Y = 0.07;
 
-extern const char vertexSource[];
-extern const char fragmentSource[];
 extern GLFWwindow *window;
 
 extern Game game;

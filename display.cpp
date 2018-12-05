@@ -1,4 +1,5 @@
 #include <iostream>
+#include <FreeImage.h>
 #include "display.h"
 #include "shader.h"
 #include "main.h"
@@ -11,7 +12,17 @@ void processInput(GLFWwindow *window);
 
 float startX, startY;
 float pcStartX, pcStartY;
-unsigned int VBO, VAO, EBO;
+const char vertexSource[] = "../vertex.vs";
+const char fragmentSource[] = "../fragment.fs";
+const char vertexBackground[] = "../vertexBackground.vs";
+const char fragmentBackground[] = "../fragmentBackground.fs";
+unsigned int VBO_boardPositions, VAO_board, EBO_board;
+unsigned int VBO_background, VAO_background, EBO_background;
+unsigned int texture;
+int imageSizeX, imageSizeY, image_nChannel;
+BYTE *image;
+const char backgroundFile[] = "../background.jpg";
+//const char backgroundFile[] = "../red.jpg";
 
 float color [9 /*colors*/][3 /*rgb*/] =
         {
@@ -206,6 +217,98 @@ void indexPiece(unsigned int *ind) {
     }
 }
 
+void swapRedwithBlue(){
+    GLubyte temp;
+    for (int i = 0; i < imageSizeY; i++){
+        for (int j = 0; j < imageSizeX; j++){
+            temp = image[(i * imageSizeX + j) * image_nChannel]; // blue
+            image[(i * imageSizeX + j) * image_nChannel] = image[(i * imageSizeX + j) * image_nChannel + 2];
+            image[(i * imageSizeX + j) * image_nChannel + 2] = temp;
+        }
+    }
+}
+
+void loadImage (char *filename) {
+    FREE_IMAGE_FORMAT formato = FreeImage_GetFIFFromFilename(filename);
+    if (formato == FIF_UNKNOWN) {
+        cout << "Image format is unknown!\n";
+        exit(1);
+    }
+    FIBITMAP *img = FreeImage_Load(formato, filename);
+    if (!img) {
+        cout << "Image cannot be found!";
+        exit(1);
+    }
+
+    FIBITMAP* tempImg = img;
+    img = FreeImage_ConvertTo32Bits(tempImg);
+    FreeImage_Unload(tempImg);
+
+    imageSizeX = FreeImage_GetWidth(img);
+    imageSizeY = FreeImage_GetHeight(img);
+    int image_bpp = FreeImage_GetBPP(img);
+    image_nChannel = image_bpp / 8;
+
+    image = FreeImage_GetBits(img);
+    if (image == nullptr) {
+        cout << "Null pointer in image.\n";
+        exit(1);
+    }
+    swapRedwithBlue();
+    FreeImage_Unload(img);
+}
+
+void generateBackground() {
+    float vertices[] = {
+            -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+            1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+            1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+            -1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+    };
+    unsigned int indices[] = {
+            0, 1, 2, // first triangle
+            0, 2, 3  // second triangle
+    };
+
+    glGenVertexArrays(1, &VAO_background);
+    glGenBuffers(1, &VBO_background);
+    glGenBuffers(1, &EBO_background);
+
+    glBindVertexArray(VAO_background);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO_background);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_background);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+    // position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    // texture attribute
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    // load and create a texture
+    // -------------------------
+
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
+    // set the texture wrapping parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    // set texture filtering parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    // load image, create texture and generate mipmaps
+    char fileName[100];
+    strcpy(fileName, backgroundFile);
+    loadImage(fileName);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageSizeX, imageSizeY, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+    glGenerateMipmap(GL_TEXTURE_2D);
+}
+
 void bindBoardVertices() {
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
@@ -221,16 +324,16 @@ void bindBoardVertices() {
     auto *indices = new unsigned int[numTriangles * 3];
     indexVertices(indices);
 
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
+    glGenVertexArrays(1, &VAO_board);
+    glGenBuffers(1, &VBO_boardPositions);
+    glGenBuffers(1, &EBO_board);
     // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-    glBindVertexArray(VAO);
+    glBindVertexArray(VAO_board);
 
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO_boardPositions);
     glBufferData(GL_ARRAY_BUFFER, sizeof(float) * numVertices * 3, positions, GL_STATIC_DRAW);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_board);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * numTriangles * 3, indices, GL_STATIC_DRAW);
 
     // position attribute
@@ -241,27 +344,27 @@ void bindBoardVertices() {
     delete[] indices;
 }
 
-Shader compileShader() {
+Shader compileShader(const char *vertexSource, const char *fragmentSource) {
     // build and compile our shader program
     // ------------------------------------
-    Shader ourShader(vertexSource, fragmentSource);
-    return ourShader;
+    Shader shader(vertexSource, fragmentSource);
+    return shader;
 }
 
-void render(Shader ourShader) {
+void render(Shader gameShader, Shader backgroundShader) {
 
     // Bind board vertices colors
-    unsigned int VBO_c;
+    unsigned int VBO_boardColors;
     int numVertices = BOARD_HEIGHT * BOARD_WIDTH * 4;
     int numTriangles = BOARD_WIDTH * BOARD_HEIGHT * 2;
     auto *colors = new float[numVertices * 3];
     getBoardColor(colors);
 
-    glGenBuffers(1, &VBO_c);
+    glGenBuffers(1, &VBO_boardColors);
     // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-    glBindVertexArray(VAO);
+    glBindVertexArray(VAO_board);
 
-    glBindBuffer(GL_ARRAY_BUFFER, VBO_c);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO_boardColors);
     glBufferData(GL_ARRAY_BUFFER, sizeof(float) * numVertices * 3, colors, GL_STATIC_DRAW);
 
     // color attribute
@@ -285,17 +388,17 @@ void render(Shader ourShader) {
     auto *indices = new unsigned int[pcNumTriangles * 3];
     indexPiece(indices);
 
-    unsigned int VBO2, VAO2, EBO2;
-    glGenVertexArrays(1, &VAO2);
-    glGenBuffers(1, &VBO2);
-    glGenBuffers(1, &EBO2);
+    unsigned int VBO_piece, VAO_piece, EBO_piece;
+    glGenVertexArrays(1, &VAO_piece);
+    glGenBuffers(1, &VBO_piece);
+    glGenBuffers(1, &EBO_piece);
     // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-    glBindVertexArray(VAO2);
+    glBindVertexArray(VAO_piece);
 
-    glBindBuffer(GL_ARRAY_BUFFER, VBO2);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO_piece);
     glBufferData(GL_ARRAY_BUFFER, sizeof(float) * pcNumVertices * 6, vertices, GL_STATIC_DRAW);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO2);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_piece);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * pcNumTriangles * 3, indices, GL_STATIC_DRAW);
 
     // position attribute
@@ -328,20 +431,28 @@ void render(Shader ourShader) {
 //    glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    ourShader.use();
-    ourShader.setFloat("startX", startX);
-    ourShader.setFloat("startY", startY);
-    ourShader.setFloat("cubeSizeX", CUBE_SIZE_X);
-    ourShader.setFloat("cubeSizeY", CUBE_SIZE_Y);
-    ourShader.setInt("boardWidth", BOARD_WIDTH);
-    ourShader.setInt("boardHeight", BOARD_HEIGHT);
+    // bind Texture
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    // render container
+    backgroundShader.use();
+    glBindVertexArray(VAO_background);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+    gameShader.use();
+    gameShader.setFloat("startX", startX);
+    gameShader.setFloat("startY", startY);
+    gameShader.setFloat("cubeSizeX", CUBE_SIZE_X);
+    gameShader.setFloat("cubeSizeY", CUBE_SIZE_Y);
+    gameShader.setInt("boardWidth", BOARD_WIDTH);
+    gameShader.setInt("boardHeight", BOARD_HEIGHT);
 
     // draw board
-    glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
+    glBindVertexArray(VAO_board); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
     glDrawElements(GL_TRIANGLES, numTriangles * 3, GL_UNSIGNED_INT, 0);
 
     // draw piece
-    glBindVertexArray(VAO2);
+    glBindVertexArray(VAO_piece);
     glDrawElements(GL_TRIANGLES, pcNumTriangles * 3, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0); // no need to unbind it every time
 
@@ -351,10 +462,10 @@ void render(Shader ourShader) {
     glfwSwapBuffers(window);
     glfwPollEvents();
 
-    glDeleteBuffers(1, &VBO_c);
-    glDeleteVertexArrays(1, &VAO2);
-    glDeleteBuffers(1, &VBO2);
-    glDeleteBuffers(1, &EBO2);
+    glDeleteBuffers(1, &VBO_boardColors);
+    glDeleteVertexArrays(1, &VAO_piece);
+    glDeleteBuffers(1, &VBO_piece);
+    glDeleteBuffers(1, &EBO_piece);
 }
 
 void dummyRender() {

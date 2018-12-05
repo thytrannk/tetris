@@ -12,8 +12,6 @@ const unsigned int SCR_HEIGHT = 600;
 
 Game game;
 GLFWwindow *window;
-const char vertexSource[] = "../vertex.vs";
-const char fragmentSource[] = "../fragment.fs";
 
 int main() {
 

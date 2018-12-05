@@ -21,7 +21,9 @@ mt19937 mt(rd());
 uniform_int_distribution<> dist(0.0, 6.0);
 
 void Game::Loop() {
-    Shader ourShader = compileShader();
+    Shader backgroundShader = compileShader(vertexBackground, fragmentBackground);
+    generateBackground();
+    Shader gameShader = compileShader(vertexSource, fragmentSource);
     bindBoardVertices();
     generatePiece();
     #ifdef __APPLE__
@@ -30,14 +32,17 @@ void Game::Loop() {
     while (!invalid() && !glfwWindowShouldClose(window)) {
         int furthestBottom;
         currentPiece->furthestBottom(BOARD_WIDTH, BOARD_HEIGHT, furthestBottom);
-        render(ourShader);
+        render(gameShader, backgroundShader);
         fallPiece(furthestBottom);
     }
     cout << "Game Over!" << endl;
     delete currentPiece;
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
-    glDeleteBuffers(1, &EBO);
+    glDeleteVertexArrays(1, &VAO_board);
+    glDeleteBuffers(1, &VBO_boardPositions);
+    glDeleteBuffers(1, &EBO_board);
+    glDeleteVertexArrays(1, &VAO_background);
+    glDeleteBuffers(1, &VBO_background);
+    glDeleteBuffers(1, &EBO_background);
 }
 
 void Game::fallPiece(int furthestBottom) {
