@@ -3,6 +3,7 @@
 #include <irrKlang.h>
 #include <chrono>
 #include <thread>
+#include <mutex>
 #include <random>
 #include "game.h"
 #include "main.h"
@@ -17,6 +18,8 @@ using namespace std::this_thread;     // sleep_for, sleep_until
 using namespace std::chrono_literals; // ns, us, ms, s, h, etc.
 using std::chrono::system_clock;
 
+mutex mtx;
+
 random_device rd;
 mt19937 mt(rd());
 uniform_int_distribution<> dist(0.0, 6.0);
@@ -28,6 +31,10 @@ const char pieceFall[] = "../audio/button.wav";
 const char pieceLock[] = "../audio/beep.wav";
 const char gameOver[] = "../audio/gameOver.wav";
 
+//Game::Game() {
+//    game_over = false;
+//}
+
 void Game::Loop() {
     ISound *game_Music = SoundEngine->play2D(gameMusic, true, false, true);
     Shader backgroundShader = compileShader(vertexBackground, fragmentBackground);
@@ -38,10 +45,10 @@ void Game::Loop() {
     #ifdef __APPLE__
         dummyRender();
     #endif
-    while (!invalid() && !glfwWindowShouldClose(window)) {
+    while (!game_over && !glfwWindowShouldClose(window)) {
         for (int i = 0; i < 5; i++) {
             render(gameShader, backgroundShader);
-            sleep_for(TIME);
+            sleep_for(TIME_SHORT);
         }
         pieceDown();
     }
@@ -62,21 +69,26 @@ void Game::Loop() {
 }
 
 void Game::pieceDown() {
-    pieceY--;
+    if (!game_over) {
+        pieceY--;
 
-    int furthestBottom;
-    currentPiece->furthestBottom(BOARD_WIDTH, BOARD_HEIGHT, furthestBottom);
+        int furthestBottom;
+        currentPiece->furthestBottom(BOARD_WIDTH, BOARD_HEIGHT, furthestBottom);
 
-    if (invalid() || pieceY < furthestBottom) {
-        // reach the bottom
-        pieceY++;
-        saveBoard();
-        delete currentPiece;
-        SoundEngine->play2D(pieceLock, false);
-        sleep_for(TIME);
-        generatePiece();
+        if (invalid() || pieceY < furthestBottom) {
+            // reach the bottom
+            pieceY++;
+            saveBoard();
+            delete currentPiece;
+            SoundEngine->play2D(pieceLock, false);
+            sleep_for(TIME_LONG);
+            generatePiece();
+            if (invalid()) {
+                game_over = true;
+            }
+        }
+        SoundEngine->play2D(pieceFall, false);
     }
-    SoundEngine->play2D(pieceFall, false);
 }
 
 void Game::saveBoard(void) {
@@ -95,13 +107,12 @@ bool Game::invalid() {
         for (int x = 0; x < 5; x++) {
             int pieceCol = currentPiece->pieceValue(x, y);
             if (pieceCol != 8) {
-                if (x + pieceX > BOARD_WIDTH - 1 || y + pieceY > BOARD_HEIGHT - 1) {
+                if (x + pieceX <= BOARD_WIDTH - 1 && y + pieceY <= BOARD_HEIGHT - 1) {
                     // Game has already been over, moving the piece up to render last frame
-                    return false;
-                }
-                int boardCol = board.value(x + pieceX, y + pieceY);
-                if (boardCol) {
-                    return true;
+                    int boardCol = board.value(x + pieceX, y + pieceY);
+                    if (boardCol) {
+                        return true;
+                    }
                 }
             }
         }

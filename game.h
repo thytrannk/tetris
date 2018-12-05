@@ -6,6 +6,7 @@
 
 class Game {
 public:
+    bool game_over = false;
     void Loop();
     Board board;
     Pieces *currentPiece;

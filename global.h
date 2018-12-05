@@ -10,7 +10,8 @@
 #define CUBE_SIZE_X 0.07
 #define CUBE_SIZE_Y 0.07
 
-#define TIME 0.1s
+#define TIME_SHORT 0.1s
+#define TIME_LONG 0.5s
 
 #define EPSILON 0.0001f
 
