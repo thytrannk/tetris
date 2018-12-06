@@ -54,7 +54,7 @@ void Game::Loop() {
                 goto over;
             }
         }
-//        pieceDown(true);
+        pieceDown(true);
     }
 
 over:
@@ -84,18 +84,20 @@ void Game::pieceDown(bool autoFall) {
         if (invalid(false) || pieceY < furthestBottom) {
             // reach the bottom
             pieceY++;
-            SoundEngine->play2D(pieceLock, false);
-            mtx.lock();
-            saveBoard();
-            delete currentPiece;
-            sleep_for(TIME_LONG);
-            generatePiece();
-            mtx.unlock();
-            if (invalid(false)) {
-                game_over = true;
+            if (autoFall) {
+                SoundEngine->play2D(pieceLock, false);
+                mtx.lock();
+                saveBoard();
+                delete currentPiece;
+                sleep_for(TIME_LONG);
+                generatePiece();
+                mtx.unlock();
+                SoundEngine->play2D(pieceFall, false);
+                if (invalid(false)) {
+                    game_over = true;
+                }
             }
-        }
-        if (autoFall) {
+        } else if (autoFall) {
             SoundEngine->play2D(pieceFall, false);
         }
     }
