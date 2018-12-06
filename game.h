@@ -12,9 +12,12 @@ public:
     Pieces *currentPiece;
     Pieces *next1Piece;
     Pieces *next2Piece;
+    int holdID;
+    bool held = false;
     int pieceX; // x coordinate of the bottom left corner of piece matrix
     int pieceY; // y coordinate of the bottom left corner of piece matrix
     int ghostY;
+    void hold();
     void pieceDown(bool autoFall);
     void pieceHardFall();
     void pieceLeft();
@@ -22,7 +25,7 @@ public:
     void pieceRotationRight();
     void pieceRotationLeft();
 private:
-    void generatePiece(Pieces **piece);
+    void generatePiece(Pieces **piece, int pieceID);
     void calcGhost();
     bool invalid(bool ghost);
     void saveBoard();

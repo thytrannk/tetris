@@ -82,5 +82,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         game.pieceRotationRight();
     } else if (key == GLFW_KEY_Z && action == GLFW_PRESS) {
         game.pieceRotationLeft();
+    } else if (key == GLFW_KEY_C && action == GLFW_PRESS) {
+        game.hold();
     }
 }

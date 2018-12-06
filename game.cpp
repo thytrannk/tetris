@@ -41,9 +41,10 @@ void Game::Loop() {
     generateBackground();
     Shader gameShader = compileShader(vertexSource, fragmentSource);
     bindBoardVertices();
-    generatePiece(&currentPiece);
-    generatePiece(&next1Piece);
-    generatePiece(&next2Piece);
+    generatePiece(&currentPiece, 8);
+    generatePiece(&next1Piece, 8);
+    generatePiece(&next2Piece, 8);
+    holdID = 7;
     #ifdef __APPLE__
         dummyRender();
     #endif
@@ -106,6 +107,26 @@ void Game::clearLines() {
     }
 }
 
+void Game::hold() {
+    if (!held) {
+        if (holdID == 7) {
+            // No hold piece yet
+            holdID = currentPiece->pieceID;
+            delete currentPiece;
+            currentPiece = next1Piece;
+            next1Piece = next2Piece;
+            generatePiece(&next2Piece, 8);
+        } else {
+            // There is a hold piece in place
+            int temp = currentPiece->pieceID;
+            delete currentPiece;
+            generatePiece(&currentPiece, holdID);
+            holdID = temp;
+        }
+    }
+    held = true;
+}
+
 void Game::pieceDown(bool autoFall) {
     if (!game_over) {
         pieceY--;
@@ -126,7 +147,8 @@ void Game::pieceDown(bool autoFall) {
                 sleep_for(TIME_LONG);
                 currentPiece = next1Piece;
                 next1Piece = next2Piece;
-                generatePiece(&next2Piece);
+                generatePiece(&next2Piece, 8);
+                held = false;
                 mtx.unlock();
                 SoundEngine->play2D(pieceFall, false);
                 if (invalid(false)) {
@@ -389,9 +411,12 @@ bool Game::invalid(bool ghost) {
     return false;
 }
 
-void Game::generatePiece(Pieces **piece) {
-    /* generate random piece from 0 to 7 */
-    int pieceID = dist(mt);
+void Game::generatePiece(Pieces **piece, int pieceID) {
+    /* if pieceID == 8, generate random piece from 0 to 7 */
+    /* otherwise, generate the corresponding piece */
+    if (pieceID == 8) {
+        pieceID = dist(mt);
+    }
     *piece = new Pieces(pieceID);
     (*piece)->StartLocation(BOARD_WIDTH, BOARD_HEIGHT, pieceX, pieceY);
     calcGhost();
