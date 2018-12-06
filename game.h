@@ -10,6 +10,8 @@ public:
     void Loop();
     Board board;
     Pieces *currentPiece;
+    Pieces *next1Piece;
+    Pieces *next2Piece;
     int pieceX; // x coordinate of the bottom left corner of piece matrix
     int pieceY; // y coordinate of the bottom left corner of piece matrix
     int ghostY;
@@ -20,7 +22,7 @@ public:
     void pieceRotationRight();
     void pieceRotationLeft();
 private:
-    void generatePiece();
+    void generatePiece(Pieces **piece);
     void calcGhost();
     bool invalid(bool ghost);
     void saveBoard();

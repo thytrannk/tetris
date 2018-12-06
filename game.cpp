@@ -41,7 +41,9 @@ void Game::Loop() {
     generateBackground();
     Shader gameShader = compileShader(vertexSource, fragmentSource);
     bindBoardVertices();
-    generatePiece();
+    generatePiece(&currentPiece);
+    generatePiece(&next1Piece);
+    generatePiece(&next2Piece);
     #ifdef __APPLE__
         dummyRender();
     #endif
@@ -66,6 +68,8 @@ over:
     game_Music->stop();
     SoundEngine->play2D(gameOver, false);
     delete currentPiece;
+    delete next1Piece;
+    delete next2Piece;
     glDeleteVertexArrays(1, &VAO_board);
     glDeleteBuffers(1, &VBO_boardPositions);
     glDeleteBuffers(1, &EBO_board);
@@ -120,7 +124,9 @@ void Game::pieceDown(bool autoFall) {
                 clearLines();
                 delete currentPiece;
                 sleep_for(TIME_LONG);
-                generatePiece();
+                currentPiece = next1Piece;
+                next1Piece = next2Piece;
+                generatePiece(&next2Piece);
                 mtx.unlock();
                 SoundEngine->play2D(pieceFall, false);
                 if (invalid(false)) {
@@ -383,27 +389,27 @@ bool Game::invalid(bool ghost) {
     return false;
 }
 
-void Game::generatePiece() {
+void Game::generatePiece(Pieces **piece) {
     /* generate random piece from 0 to 7 */
     int pieceID = dist(mt);
-    currentPiece = new Pieces(pieceID);
-    currentPiece->StartLocation(BOARD_WIDTH, BOARD_HEIGHT, pieceX, pieceY);
+    *piece = new Pieces(pieceID);
+    (*piece)->StartLocation(BOARD_WIDTH, BOARD_HEIGHT, pieceX, pieceY);
     calcGhost();
-    if (pieceID == 0) {
-        cout << "square" << endl;
-    } else if (pieceID == 0) {
-        cout << "square" << endl;
-    } else if (pieceID == 1) {
-        cout << "I" << endl;
-    } else if (pieceID == 2) {
-        cout << "L" << endl;
-    } else if (pieceID == 3) {
-        cout << "L-mirrored" << endl;
-    } else if (pieceID == 4) {
-        cout << "Z" << endl;
-    } else if (pieceID == 5) {
-        cout << "S" << endl;
-    } else if (pieceID == 6) {
-        cout << "T" << endl;
-    }
+//    if (pieceID == 0) {
+//        cout << "square" << endl;
+//    } else if (pieceID == 0) {
+//        cout << "square" << endl;
+//    } else if (pieceID == 1) {
+//        cout << "I" << endl;
+//    } else if (pieceID == 2) {
+//        cout << "L" << endl;
+//    } else if (pieceID == 3) {
+//        cout << "L-mirrored" << endl;
+//    } else if (pieceID == 4) {
+//        cout << "Z" << endl;
+//    } else if (pieceID == 5) {
+//        cout << "S" << endl;
+//    } else if (pieceID == 6) {
+//        cout << "T" << endl;
+//    }
 }
