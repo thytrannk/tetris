@@ -23,7 +23,8 @@ private:
     void generatePiece();
     void calcGhost();
     bool invalid(bool ghost);
-    void saveBoard(void);
+    void saveBoard();
+    void clearLines();
 };
 
 #endif //TETRIS_GAME_H

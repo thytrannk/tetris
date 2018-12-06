@@ -8,9 +8,9 @@ public:
     Board ();
     int value(int x, int y);
     void assign(int x, int y, int val);
+    void deleteLine(int y);
 private:
     int board[BOARD_WIDTH][BOARD_HEIGHT];
-    void deleteLine(int y);
 };
 
 #endif //TETRIS_BOARD_H

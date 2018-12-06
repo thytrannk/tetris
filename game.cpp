@@ -74,6 +74,34 @@ over:
     glDeleteBuffers(1, &EBO_background);
 }
 
+void Game::clearLines() {
+    bool flag = true;
+    int endLine = pieceY + 5;
+    for (int y = pieceY; y < endLine; y++) {
+        if (y >= 0 && y < BOARD_HEIGHT) {
+            // The row we're looking at is on the board and is where the last piece just locked on
+            for (int i = 0; i < BOARD_WIDTH; i++) {
+                // go through each horizontal position
+                if (board.value(i, y) == 0) {
+                    flag = false;
+                    break;
+                }
+            }
+            if (flag) {
+                for (int i = y; i < BOARD_HEIGHT - 1; i++) {
+                    for (int j = 0; j < BOARD_WIDTH; j++) {
+                        int above = board.value(j, i + 1);
+                        board.assign(j, i, above);
+                        board.assign(j, i + 1, 0);
+                    }
+                }
+                y--;
+                endLine--;
+            }
+        }
+    }
+}
+
 void Game::pieceDown(bool autoFall) {
     if (!game_over) {
         pieceY--;
@@ -86,8 +114,10 @@ void Game::pieceDown(bool autoFall) {
             pieceY++;
             if (autoFall) {
                 SoundEngine->play2D(pieceLock, false);
+                clearLines();
                 mtx.lock();
                 saveBoard();
+                clearLines();
                 delete currentPiece;
                 sleep_for(TIME_LONG);
                 generatePiece();
