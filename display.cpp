@@ -451,6 +451,40 @@ Shader compileShader(const char *vertexSource, const char *fragmentSource) {
     return shader;
 }
 
+void bindPiece(string type, unsigned int *indices, unsigned int *VBO_piece, unsigned int *VAO_piece, unsigned int EBO_piece) {
+    const int pcNumVertices = 100; // 5 blocks * 5 blocks * 4 corners
+    auto *piece = new float[pcNumVertices * 6];
+    drawPiece(piece, type);
+
+    // bind vertex array
+
+    glGenVertexArrays(1, VAO_piece);
+    glGenBuffers(1, VBO_piece);
+    // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
+    glBindVertexArray(*VAO_piece);
+
+    glBindBuffer(GL_ARRAY_BUFFER, *VBO_piece);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * pcNumVertices * 6, piece, GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_piece);
+
+    // position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    // color attribute
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3* sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
+    // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
+    glBindVertexArray(0);
+
+    delete[] piece;
+}
+
 void render(Shader gameShader, Shader backgroundShader) {
 
     // Bind board vertices colors
@@ -481,133 +515,27 @@ void render(Shader gameShader, Shader backgroundShader) {
     delete[] colors;
 
     // Create current piece, next pieces and ghost vertices position, colors and indices
-    int pcNumVertices = 5 * 5 * 4;
-    auto *currentPc = new float[pcNumVertices * 6];
-    drawPiece(currentPc, "current");
-    auto *next1Pc = new float[pcNumVertices * 6];
-    drawPiece(next1Pc, "next1");
-    auto *next2Pc = new float[pcNumVertices * 6];
-    drawPiece(next2Pc, "next2");
-    auto *ghost = new float[pcNumVertices * 6];
-    drawPiece(ghost, "ghost");
-    int pcNumTriangles = 5 * 5 * 2;
-    auto *indices = new unsigned int[pcNumTriangles * 3];
+
+    unsigned int VBO_current, VAO_current, EBO_piece, VBO_ghost, VAO_ghost, VBO_next1, VAO_next1, VBO_next2, VAO_next2;
+
+    auto *indices = new unsigned int[150]; // 5 blocks * 5 blocks * 2 triangles * 3 vertices
     indexPiece(indices);
 
-    unsigned int VBO_piece, VAO_piece, EBO_piece, VBO_ghost, VAO_ghost, VBO_next1, VAO_next1, VBO_next2, VAO_next2;
+    glGenBuffers(1, &EBO_piece);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_piece);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * 150, indices, GL_STATIC_DRAW);
 
     // bind vertex array for ghost
-
-    glGenVertexArrays(1, &VAO_ghost);
-    glGenBuffers(1, &VBO_ghost);
-    glGenBuffers(1, &EBO_piece);
-    // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-    glBindVertexArray(VAO_ghost);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO_ghost);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * pcNumVertices * 6, ghost, GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_piece);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * pcNumTriangles * 3, indices, GL_STATIC_DRAW);
-
-    // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-    // color attribute
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3* sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-    // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
-    // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
-    glBindVertexArray(0);
+    bindPiece("ghost", indices, &VBO_ghost, &VAO_ghost, EBO_piece);
 
     // bind vertex array for current piece
-
-    glGenVertexArrays(1, &VAO_piece);
-    glGenBuffers(1, &VBO_piece);
-    // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-    glBindVertexArray(VAO_piece);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO_piece);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * pcNumVertices * 6, currentPc, GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_piece);
-
-    // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-    // color attribute
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3* sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-    // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
-    // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
-    glBindVertexArray(0);
+    bindPiece("current", indices, &VBO_current, &VAO_current, EBO_piece);
 
     // bind vertex array for next1 piece
-
-    glGenVertexArrays(1, &VAO_next1);
-    glGenBuffers(1, &VBO_next1);
-    // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-    glBindVertexArray(VAO_next1);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO_next1);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * pcNumVertices * 6, next1Pc, GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_piece);
-
-    // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-    // color attribute
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3* sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-    // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
-    // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
-    glBindVertexArray(0);
+    bindPiece("next1", indices, &VBO_next1, &VAO_next1, EBO_piece);
 
     // bind vertex array for next2 piece
-
-    glGenVertexArrays(1, &VAO_next2);
-    glGenBuffers(1, &VBO_next2);
-    // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-    glBindVertexArray(VAO_next2);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO_next2);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * pcNumVertices * 6, next2Pc, GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_piece);
-
-    // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-    // color attribute
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3* sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-    // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
-    // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
-    glBindVertexArray(0);
-
-    delete[] currentPc;
-    delete[] next1Pc;
-    delete[] next2Pc;
-    delete[] ghost;
-    delete[] indices;
-
+    bindPiece("next2", indices, &VBO_next2, &VAO_next2, EBO_piece);
 
     // render loop
     // -----------
@@ -643,11 +571,11 @@ void render(Shader gameShader, Shader backgroundShader) {
 
     // draw ghost
     glBindVertexArray(VAO_ghost);
-    glDrawElements(GL_TRIANGLES, pcNumTriangles * 3, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, 150, GL_UNSIGNED_INT, 0);
 
     // draw current piece
-    glBindVertexArray(VAO_piece);
-    glDrawElements(GL_TRIANGLES, pcNumTriangles * 3, GL_UNSIGNED_INT, 0);
+    glBindVertexArray(VAO_current);
+    glDrawElements(GL_TRIANGLES, 150, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0); // no need to unbind it every time
 
     gameShader.setFloat("startX", CUBE_SIZE_X * (BOARD_WIDTH / 2.0f + 2.0f));
@@ -656,12 +584,12 @@ void render(Shader gameShader, Shader backgroundShader) {
 
     // draw next1 piece
     glBindVertexArray(VAO_next1);
-    glDrawElements(GL_TRIANGLES, pcNumTriangles * 3, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, 150, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0); // no need to unbind it every time
 
     // draw next2 piece
     glBindVertexArray(VAO_next2);
-    glDrawElements(GL_TRIANGLES, pcNumTriangles * 3, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, 150, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0); // no need to unbind it every time
 
 
@@ -671,8 +599,8 @@ void render(Shader gameShader, Shader backgroundShader) {
     glfwPollEvents();
 
     glDeleteBuffers(1, &VBO_boardColors);
-    glDeleteVertexArrays(1, &VAO_piece);
-    glDeleteBuffers(1, &VBO_piece);
+    glDeleteVertexArrays(1, &VAO_current);
+    glDeleteBuffers(1, &VBO_current);
     glDeleteVertexArrays(1, &VAO_ghost);
     glDeleteBuffers(1, &VBO_ghost);
     glDeleteVertexArrays(1, &VAO_next1);
