@@ -142,10 +142,18 @@ void indexVertices(unsigned int *ind) {
     }
 }
 
-void drawPiece(float *vertices, bool ghost) {
-    pcStartX = startX + game.pieceX * CUBE_SIZE_X;
-    if (ghost) {
+void drawPiece(float *vertices, string type) {
+    if (type == "current" || type == "ghost") {
+        pcStartX = startX + game.pieceX * CUBE_SIZE_X;
+    } else {
+        pcStartX = BOARD_WIDTH / 2.0f + CUBE_SIZE_X * 2.0f;
+    }
+    if (type == "ghost") {
         pcStartY = startY + game.ghostY * CUBE_SIZE_Y;
+    } else if (type == "next1") {
+        pcStartY = BOARD_HEIGHT / 2.0f - CUBE_SIZE_Y * 5.0f;
+    } else if (type == "next2") {
+        pcStartY = BOARD_HEIGHT / 2.0f - CUBE_SIZE_Y * 12.0f;
     } else {
         pcStartY = startY + game.pieceY * CUBE_SIZE_Y;
     }
@@ -183,7 +191,7 @@ void drawPiece(float *vertices, bool ghost) {
             // vertex[j][i].z
             vertices[24 * (i * 5 + j) + 20] = 0.0;
 
-            if (ghost) {
+            if (type == "ghost") {
                 if (game.currentPiece->pieceValue(j, i) != 8) {
                     // bottom left vertex
                     // vertex[j][i].r
@@ -250,37 +258,45 @@ void drawPiece(float *vertices, bool ghost) {
                     vertices[24 * (i * 5 + j) + 23] = color[8][2];
                 }
             } else {
+                int val;
+                if (type == "next1") {
+                    val = game.next1Piece->pieceValue(j, i);
+                } else if (type == "next2") {
+                    val = game.next2Piece->pieceValue(j, i);
+                } else {
+                    val = game.currentPiece->pieceValue(j, i);
+                }
                 // bottom left vertex
                 // vertex[j][i].r
-                vertices[24 * (i * 5 + j) + 3] = color[(game.currentPiece)->pieceValue(j, i)][0];
+                vertices[24 * (i * 5 + j) + 3] = color[val][0];
                 // vertex[j][i].g
-                vertices[24 * (i * 5 + j) + 4] = color[game.currentPiece->pieceValue(j, i)][1];
+                vertices[24 * (i * 5 + j) + 4] = color[val][1];
                 // vertex[j][i].b
-                vertices[24 * (i * 5 + j) + 5] = color[game.currentPiece->pieceValue(j, i)][2];
+                vertices[24 * (i * 5 + j) + 5] = color[val][2];
 
                 // bottom right vertex
                 // vertex[j][i].r
-                vertices[24 * (i * 5 + j) + 9] = color[game.currentPiece->pieceValue(j, i)][0];
+                vertices[24 * (i * 5 + j) + 9] = color[val][0];
                 // vertex[j][i].g
-                vertices[24 * (i * 5 + j) + 10] = color[game.currentPiece->pieceValue(j, i)][1];
+                vertices[24 * (i * 5 + j) + 10] = color[val][1];
                 // vertex[j][i].b
-                vertices[24 * (i * 5 + j) + 11] = color[game.currentPiece->pieceValue(j, i)][2];
+                vertices[24 * (i * 5 + j) + 11] = color[val][2];
 
                 // top right vertex
                 // vertex[j][i].r
-                vertices[24 * (i * 5 + j) + 15] = color[game.currentPiece->pieceValue(j, i)][0];
+                vertices[24 * (i * 5 + j) + 15] = color[val][0];
                 // vertex[j][i].g
-                vertices[24 * (i * 5 + j) + 16] = color[game.currentPiece->pieceValue(j, i)][1];
+                vertices[24 * (i * 5 + j) + 16] = color[val][1];
                 // vertex[j][i].b
-                vertices[24 * (i * 5 + j) + 17] = color[game.currentPiece->pieceValue(j, i)][2];
+                vertices[24 * (i * 5 + j) + 17] = color[val][2];
 
                 // top left vertex
                 // vertex[j][i].r
-                vertices[24 * (i * 5 + j) + 21] = color[game.currentPiece->pieceValue(j, i)][0];
+                vertices[24 * (i * 5 + j) + 21] = color[val][0];
                 // vertex[j][i].g
-                vertices[24 * (i * 5 + j) + 22] = color[game.currentPiece->pieceValue(j, i)][1];
+                vertices[24 * (i * 5 + j) + 22] = color[val][1];
                 // vertex[j][i].b
-                vertices[24 * (i * 5 + j) + 23] = color[game.currentPiece->pieceValue(j, i)][2];
+                vertices[24 * (i * 5 + j) + 23] = color[val][2];
             }
         }
 
@@ -464,17 +480,21 @@ void render(Shader gameShader, Shader backgroundShader) {
 
     delete[] colors;
 
-    // Create piece and ghost vertices position, colors and indices
+    // Create current piece, next pieces and ghost vertices position, colors and indices
     int pcNumVertices = 5 * 5 * 4;
-    auto *vertices = new float[pcNumVertices * 6];
-    drawPiece(vertices, false);
+    auto *currentPc = new float[pcNumVertices * 6];
+    drawPiece(currentPc, "current");
+    auto *next1Pc = new float[pcNumVertices * 6];
+    drawPiece(next1Pc, "next1");
+    auto *next2Pc = new float[pcNumVertices * 6];
+    drawPiece(next2Pc, "next2");
     auto *ghost = new float[pcNumVertices * 6];
-    drawPiece(ghost, true);
+    drawPiece(ghost, "ghost");
     int pcNumTriangles = 5 * 5 * 2;
     auto *indices = new unsigned int[pcNumTriangles * 3];
     indexPiece(indices);
 
-    unsigned int VBO_piece, VAO_piece, EBO_piece, VBO_ghost, VAO_ghost;
+    unsigned int VBO_piece, VAO_piece, EBO_piece, VBO_ghost, VAO_ghost, VBO_next1, VAO_next1, VBO_next2, VAO_next2;
 
     // bind vertex array for ghost
 
@@ -504,7 +524,7 @@ void render(Shader gameShader, Shader backgroundShader) {
     // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
     glBindVertexArray(0);
 
-    // bind vertex array for piece
+    // bind vertex array for current piece
 
     glGenVertexArrays(1, &VAO_piece);
     glGenBuffers(1, &VBO_piece);
@@ -513,7 +533,7 @@ void render(Shader gameShader, Shader backgroundShader) {
     glBindVertexArray(VAO_piece);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO_piece);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * pcNumVertices * 6, vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * pcNumVertices * 6, currentPc, GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_piece);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * pcNumTriangles * 3, indices, GL_STATIC_DRAW);
@@ -532,7 +552,65 @@ void render(Shader gameShader, Shader backgroundShader) {
     // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
     glBindVertexArray(0);
 
-    delete[] vertices;
+    // bind vertex array for next1 piece
+
+    glGenVertexArrays(1, &VAO_next1);
+    glGenBuffers(1, &VBO_next1);
+    glGenBuffers(1, &EBO_piece);
+    // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
+    glBindVertexArray(VAO_next1);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO_next1);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * pcNumVertices * 6, next1Pc, GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_piece);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * pcNumTriangles * 3, indices, GL_STATIC_DRAW);
+
+    // position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    // color attribute
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3* sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
+    // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
+    glBindVertexArray(0);
+
+    // bind vertex array for next2 piece
+
+    glGenVertexArrays(1, &VAO_next2);
+    glGenBuffers(1, &VBO_next2);
+    glGenBuffers(1, &EBO_piece);
+    // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
+    glBindVertexArray(VAO_next2);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO_next2);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * pcNumVertices * 6, next2Pc, GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_piece);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * pcNumTriangles * 3, indices, GL_STATIC_DRAW);
+
+    // position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    // color attribute
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3* sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
+    // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
+    glBindVertexArray(0);
+
+    delete[] currentPc;
+    delete[] next1Pc;
+    delete[] next2Pc;
     delete[] ghost;
     delete[] indices;
 
@@ -572,8 +650,21 @@ void render(Shader gameShader, Shader backgroundShader) {
     glBindVertexArray(VAO_ghost);
     glDrawElements(GL_TRIANGLES, pcNumTriangles * 3, GL_UNSIGNED_INT, 0);
 
-    // draw piece
+    // draw current piece
     glBindVertexArray(VAO_piece);
+    glDrawElements(GL_TRIANGLES, pcNumTriangles * 3, GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0); // no need to unbind it every time
+
+    gameShader.setFloat("startX", BOARD_WIDTH / 2.0f + CUBE_SIZE_X * 2.0f);
+    gameShader.setFloat("startY", BOARD_WIDTH / 2.0f - CUBE_SIZE_X * 12.0f);
+
+    // draw next1 piece
+    glBindVertexArray(VAO_next1);
+    glDrawElements(GL_TRIANGLES, pcNumTriangles * 3, GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0); // no need to unbind it every time
+
+    // draw next2 piece
+    glBindVertexArray(VAO_next2);
     glDrawElements(GL_TRIANGLES, pcNumTriangles * 3, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0); // no need to unbind it every time
 
@@ -588,6 +679,10 @@ void render(Shader gameShader, Shader backgroundShader) {
     glDeleteBuffers(1, &VBO_piece);
     glDeleteVertexArrays(1, &VAO_ghost);
     glDeleteBuffers(1, &VBO_ghost);
+    glDeleteVertexArrays(1, &VAO_next1);
+    glDeleteBuffers(1, &VBO_next1);
+    glDeleteVertexArrays(1, &VAO_next2);
+    glDeleteBuffers(1, &VBO_next2);
     glDeleteBuffers(1, &EBO_piece);
 }
 
