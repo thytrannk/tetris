@@ -5,6 +5,7 @@ in vec3 pos;
 
 uniform float startX;
 uniform float startY;
+uniform bool nextPc;
 uniform float cubeSizeX;
 uniform float cubeSizeY;
 uniform int boardWidth;
@@ -145,6 +146,12 @@ void main() {
         || y > boardHeight - 1 || y < 0
         ) {
         // transparent locations on pieces
-        FragColor = vec4(0.0, 0.0, 0.0, 0.0);
+        if (nextPc) {
+            FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+        } else {
+            FragColor = vec4(0.0, 0.0, 0.0, 0.0);
+        }
     }
+
+//    FragColor = vec4(ourColor, 1.0);
 }

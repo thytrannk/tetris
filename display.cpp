@@ -142,18 +142,18 @@ void indexVertices(unsigned int *ind) {
     }
 }
 
-void drawPiece(float *vertices, string type) {
+void drawPiece(float *vertices, const string type) {
     if (type == "current" || type == "ghost") {
         pcStartX = startX + game.pieceX * CUBE_SIZE_X;
     } else {
-        pcStartX = BOARD_WIDTH / 2.0f + CUBE_SIZE_X * 2.0f;
+        pcStartX = CUBE_SIZE_X * (BOARD_WIDTH / 2.0f + 2.0f);
     }
     if (type == "ghost") {
         pcStartY = startY + game.ghostY * CUBE_SIZE_Y;
     } else if (type == "next1") {
-        pcStartY = BOARD_HEIGHT / 2.0f - CUBE_SIZE_Y * 5.0f;
+        pcStartY = CUBE_SIZE_Y * (BOARD_HEIGHT / 2.0f - 5.0f);
     } else if (type == "next2") {
-        pcStartY = BOARD_HEIGHT / 2.0f - CUBE_SIZE_Y * 12.0f;
+        pcStartY = CUBE_SIZE_Y * (BOARD_HEIGHT / 2.0f - 12.0f);
     } else {
         pcStartY = startY + game.pieceY * CUBE_SIZE_Y;
     }
@@ -528,7 +528,7 @@ void render(Shader gameShader, Shader backgroundShader) {
 
     glGenVertexArrays(1, &VAO_piece);
     glGenBuffers(1, &VBO_piece);
-    glGenBuffers(1, &EBO_piece);
+//    glGenBuffers(1, &EBO_piece);
     // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
     glBindVertexArray(VAO_piece);
 
@@ -556,7 +556,7 @@ void render(Shader gameShader, Shader backgroundShader) {
 
     glGenVertexArrays(1, &VAO_next1);
     glGenBuffers(1, &VBO_next1);
-    glGenBuffers(1, &EBO_piece);
+//    glGenBuffers(1, &EBO_piece);
     // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
     glBindVertexArray(VAO_next1);
 
@@ -584,7 +584,7 @@ void render(Shader gameShader, Shader backgroundShader) {
 
     glGenVertexArrays(1, &VAO_next2);
     glGenBuffers(1, &VBO_next2);
-    glGenBuffers(1, &EBO_piece);
+//    glGenBuffers(1, &EBO_piece);
     // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
     glBindVertexArray(VAO_next2);
 
@@ -637,6 +637,7 @@ void render(Shader gameShader, Shader backgroundShader) {
     gameShader.use();
     gameShader.setFloat("startX", startX);
     gameShader.setFloat("startY", startY);
+    gameShader.setBool("nextPc", false);
     gameShader.setFloat("cubeSizeX", CUBE_SIZE_X);
     gameShader.setFloat("cubeSizeY", CUBE_SIZE_Y);
     gameShader.setInt("boardWidth", BOARD_WIDTH);
@@ -655,8 +656,9 @@ void render(Shader gameShader, Shader backgroundShader) {
     glDrawElements(GL_TRIANGLES, pcNumTriangles * 3, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0); // no need to unbind it every time
 
-    gameShader.setFloat("startX", BOARD_WIDTH / 2.0f + CUBE_SIZE_X * 2.0f);
-    gameShader.setFloat("startY", BOARD_WIDTH / 2.0f - CUBE_SIZE_X * 12.0f);
+    gameShader.setFloat("startX", CUBE_SIZE_X * (BOARD_WIDTH / 2.0f + 2.0f));
+    gameShader.setFloat("startY", CUBE_SIZE_X * (BOARD_WIDTH / 2.0f - 12.0f));
+    gameShader.setBool("nextPc", true);
 
     // draw next1 piece
     glBindVertexArray(VAO_next1);
