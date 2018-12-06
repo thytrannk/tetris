@@ -528,7 +528,6 @@ void render(Shader gameShader, Shader backgroundShader) {
 
     glGenVertexArrays(1, &VAO_piece);
     glGenBuffers(1, &VBO_piece);
-//    glGenBuffers(1, &EBO_piece);
     // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
     glBindVertexArray(VAO_piece);
 
@@ -536,7 +535,6 @@ void render(Shader gameShader, Shader backgroundShader) {
     glBufferData(GL_ARRAY_BUFFER, sizeof(float) * pcNumVertices * 6, currentPc, GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_piece);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * pcNumTriangles * 3, indices, GL_STATIC_DRAW);
 
     // position attribute
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
@@ -556,7 +554,6 @@ void render(Shader gameShader, Shader backgroundShader) {
 
     glGenVertexArrays(1, &VAO_next1);
     glGenBuffers(1, &VBO_next1);
-//    glGenBuffers(1, &EBO_piece);
     // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
     glBindVertexArray(VAO_next1);
 
@@ -564,7 +561,6 @@ void render(Shader gameShader, Shader backgroundShader) {
     glBufferData(GL_ARRAY_BUFFER, sizeof(float) * pcNumVertices * 6, next1Pc, GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_piece);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * pcNumTriangles * 3, indices, GL_STATIC_DRAW);
 
     // position attribute
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
@@ -584,7 +580,6 @@ void render(Shader gameShader, Shader backgroundShader) {
 
     glGenVertexArrays(1, &VAO_next2);
     glGenBuffers(1, &VBO_next2);
-//    glGenBuffers(1, &EBO_piece);
     // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
     glBindVertexArray(VAO_next2);
 
@@ -592,7 +587,6 @@ void render(Shader gameShader, Shader backgroundShader) {
     glBufferData(GL_ARRAY_BUFFER, sizeof(float) * pcNumVertices * 6, next2Pc, GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_piece);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * pcNumTriangles * 3, indices, GL_STATIC_DRAW);
 
     // position attribute
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
