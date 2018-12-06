@@ -112,6 +112,9 @@ void main() {
         || ourColor == vec3(0.0, 0.0, 0.0)) {
         // borders, empty locations, and outside board
         FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+    } else if (ourColor == vec3(0.3, 0.3, 0.3)) {
+        // ghost
+        FragColor = vec4(ourColor, 1.0);
     } else if (ourColor != vec3(1.0, 1.0, 1.0)) {
         // locations with cubes
         col = ourColor;

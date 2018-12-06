@@ -613,7 +613,5 @@ void processInput(GLFWwindow *window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
-    } else if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-        cout << "Left";
     }
 }

@@ -54,7 +54,7 @@ void Game::Loop() {
                 goto over;
             }
         }
-        pieceDown(true);
+//        pieceDown(true);
     }
 
 over:
@@ -101,6 +101,191 @@ void Game::pieceDown(bool autoFall) {
     }
 }
 
+void Game::pieceLeft() {
+    if (!game_over) {
+        int furthestLeft;
+        currentPiece->furthestLeft(BOARD_WIDTH, BOARD_HEIGHT, furthestLeft);
+
+        pieceX--;
+
+        if (invalid(false) || pieceX < furthestLeft) {
+            // cannot go left
+            pieceX++;
+        } else {
+            calcGhost();
+        }
+//        cout << "pieceX=" << pieceX << endl;
+//        cout << "furthestLeft=" << furthestLeft << endl;
+    }
+}
+
+void Game::pieceRight() {
+    if (!game_over) {
+        int furthestRight;
+        currentPiece->furthestRight(BOARD_WIDTH, BOARD_HEIGHT, furthestRight);
+
+        pieceX++;
+
+        if (invalid(false) || pieceX > furthestRight) {
+            // cannot go right
+            pieceX--;
+        } else {
+            calcGhost();
+        }
+    }
+}
+
+void Game::pieceRotationRight() {
+    if (!game_over) {
+        if (currentPiece->rotation == 3) {
+            currentPiece->rotation = 0;
+        } else {
+            currentPiece->rotation++;
+        }
+        if (invalid(false)) {
+            // cannot rotate
+            pieceRotationLeft();
+        } else {
+            int furthestRight;
+            currentPiece->furthestRight(BOARD_WIDTH, BOARD_HEIGHT, furthestRight);
+            int furthestLeft;
+            currentPiece->furthestLeft(BOARD_WIDTH, BOARD_HEIGHT, furthestLeft);
+            int furthestBottom;
+            currentPiece->furthestBottom(BOARD_WIDTH, BOARD_HEIGHT, furthestBottom);
+            int furthestTop;
+            currentPiece->furthestTop(BOARD_WIDTH, BOARD_HEIGHT, furthestTop);
+            int i = 0;
+            if (pieceX > furthestRight) {
+                while (pieceX > furthestRight) {
+                    pieceX--;
+                    i++;
+                }
+                if (invalid(false)) {
+                    while (i > 0) {
+                        pieceX++;
+                        i--;
+                    }
+                    pieceRotationLeft();
+                }
+            } else if (pieceX < furthestLeft) {
+                while (pieceX < furthestLeft) {
+                    pieceX++;
+                    i++;
+                }
+                if (invalid(false)) {
+                    while (i > 0) {
+                        pieceX--;
+                        i--;
+                    }
+                    pieceRotationLeft();
+                }
+            } else if (pieceY < furthestBottom) {
+                while (pieceY < furthestBottom) {
+                    pieceY++;
+                    i++;
+                }
+                if (invalid(false)) {
+                    while (i > 0) {
+                        pieceY--;
+                        i--;
+                    }
+                    pieceRotationLeft();
+                }
+            } else if (pieceY > furthestTop) {
+                while (pieceY > furthestTop) {
+                    pieceY--;
+                    i++;
+                }
+                if (invalid(false)) {
+                    while (i > 0) {
+                        pieceY++;
+                        i--;
+                    }
+                    pieceRotationLeft();
+                }
+            }
+//            cout << "pieceX=" << pieceX << endl;
+//            cout << "furthestLeft=" << furthestLeft << endl;
+        }
+        calcGhost();
+
+    }
+}
+
+void Game::pieceRotationLeft() {
+    if (!game_over) {
+        if (currentPiece->rotation == 0) {
+            currentPiece->rotation = 3;
+        } else {
+            currentPiece->rotation--;
+        }
+        if (invalid(false)) {
+            // cannot rotate
+            pieceRotationRight();
+        } else {
+            int furthestRight;
+            currentPiece->furthestRight(BOARD_WIDTH, BOARD_HEIGHT, furthestRight);
+            int furthestLeft;
+            currentPiece->furthestLeft(BOARD_WIDTH, BOARD_HEIGHT, furthestLeft);
+            int furthestBottom;
+            currentPiece->furthestBottom(BOARD_WIDTH, BOARD_HEIGHT, furthestBottom);
+            int furthestTop;
+            currentPiece->furthestTop(BOARD_WIDTH, BOARD_HEIGHT, furthestTop);
+            int i = 0;
+            if (pieceX > furthestRight) {
+                while (pieceX > furthestRight) {
+                    pieceX--;
+                    i++;
+                }
+                if (invalid(false)) {
+                    while (i > 0) {
+                        pieceX++;
+                        i--;
+                    }
+                    pieceRotationRight();
+                }
+            } else if (pieceX < furthestLeft) {
+                while (pieceX < furthestLeft) {
+                    pieceX++;
+                    i++;
+                }
+                if (invalid(false)) {
+                    while (i > 0) {
+                        pieceX--;
+                        i--;
+                    }
+                    pieceRotationRight();
+                }
+            } else if (pieceY < furthestBottom) {
+                while (pieceY < furthestBottom) {
+                    pieceY++;
+                    i++;
+                }
+                if (invalid(false)) {
+                    while (i > 0) {
+                        pieceY--;
+                        i--;
+                    }
+                    pieceRotationRight();
+                }
+            } else if (pieceY > furthestTop) {
+                while (pieceY > furthestTop) {
+                    pieceY--;
+                    i++;
+                }
+                if (invalid(false)) {
+                    while (i > 0) {
+                        pieceY++;
+                        i--;
+                    }
+                    pieceRotationRight();
+                }
+            }
+        }
+        calcGhost();
+    }
+}
+
 void Game::calcGhost() {
     ghostY = pieceY;
     int furthestBottom;
@@ -111,6 +296,9 @@ void Game::calcGhost() {
 
     // reach the bottom
     ghostY++;
+
+//    cout << "ghostY=" << ghostY << endl;
+//    cout << "furthestBottom=" << furthestBottom << endl;
 }
 
 void Game::pieceHardFall() {
@@ -147,7 +335,10 @@ bool Game::invalid(bool ghost) {
         for (int x = 0; x < 5; x++) {
             int pieceCol = currentPiece->pieceValue(x, y);
             if (pieceCol != 8) {
-                if (x + pieceX <= BOARD_WIDTH - 1 && y + yy <= BOARD_HEIGHT - 1) {
+                if (x + pieceX < BOARD_WIDTH
+                        && x + pieceX >= 0
+                        && y + yy < BOARD_HEIGHT
+                        && y + yy >= 0) {
                     // Piece within board
                     int boardCol = board.value(x + pieceX, y + yy);
                     if (boardCol) {

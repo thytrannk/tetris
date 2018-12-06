@@ -63,18 +63,24 @@ int main() {
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
 // ---------------------------------------------------------------------------------------------
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
+void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     // make sure the viewport matches the new window dimensions; note that width and
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
 }
 
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     if (key == GLFW_KEY_DOWN && action == GLFW_PRESS) {
         game.pieceDown(false);
     } else if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
         game.pieceHardFall();
+    } else if (key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
+        game.pieceLeft();
+    } else if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS) {
+        game.pieceRight();
+    } else if (key == GLFW_KEY_X && action == GLFW_PRESS) {
+        game.pieceRotationRight();
+    } else if (key == GLFW_KEY_Z && action == GLFW_PRESS) {
+        game.pieceRotationLeft();
     }
 }

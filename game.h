@@ -15,6 +15,10 @@ public:
     int ghostY;
     void pieceDown(bool autoFall);
     void pieceHardFall();
+    void pieceLeft();
+    void pieceRight();
+    void pieceRotationRight();
+    void pieceRotationLeft();
 private:
     void generatePiece();
     void calcGhost();

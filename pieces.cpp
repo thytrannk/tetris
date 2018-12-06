@@ -265,78 +265,147 @@ void Pieces::furthestBottom(int boardWidth, int boardHeight, int &y){
         y = -1;
     } else if (pieceID == 1) {
         // I
-        y = -2;
+        if (rotation == 0 || rotation == 2) {
+            y = -2;
+        } else if (rotation == 1) {
+            y = 0;
+        } else {
+            y = -1;
+        }
     } else if (pieceID == 2) {
         // L
-        y = -1;
+        if (rotation == 3) {
+            y = -2;
+        } else {
+            y = -1;
+        }
     } else if (pieceID == 3) {
         // L mirrored
-        y = -1;
-    } else if (pieceID == 4) {
-        // Z
-        y = -1;
-    } else if (pieceID == 5) {
-        // S
-        y = -1;
+        if (rotation == 1) {
+            y = -2;
+        } else {
+            y = -1;
+        }
     } else {
-        // T
-        y = -1;
+        // Z or S or T
+        if (rotation == 3) {
+            y = -2;
+        } else {
+            y = -1;
+        }
     }
 }
 
 void Pieces::furthestTop(int boardWidth, int boardHeight, int &y) {
+    // only used for start location of a new piece, rotation == 0
     if (pieceID == 0) {
         // square
         y = boardHeight - 3;
     } else if (pieceID == 1) {
         // I
-        y = boardHeight - 3;
+        if (rotation == 0 || rotation == 2) {
+            y = boardHeight - 3;
+        } else if (rotation == 1) {
+            y = boardHeight - 4;
+        } else {
+            y = boardHeight - 5;
+        }
     } else if (pieceID == 2) {
         // L
-        y = boardHeight - 4;
+        if (rotation == 1) {
+            y = boardHeight - 3;
+        } else {
+            y = boardHeight - 4;
+        }
     } else if (pieceID == 3) {
         // L mirrored
-        y = boardHeight - 4;
-    } else if (pieceID == 4) {
-        // Z
-        y = boardHeight - 4;
-    } else if (pieceID == 5) {
-        // S
-        y = boardHeight - 4;
+        if (rotation == 3) {
+            y = boardHeight - 3;
+        } else {
+            y = boardHeight - 4;
+        }
     } else {
-        // T
-        y = boardHeight - 4;
+        // Z or S or T
+        if (rotation == 1) {
+            y = boardHeight - 3;
+        } else {
+            y = boardHeight - 4;
+        }
     }
 }
 
 void Pieces::furthestLeft(int boardWidth, int boardHeight, int &x) {
     if (pieceID == 0) {
         // square
-        x = boardWidth - 2;
+        x = -2;
     } else if (pieceID == 1) {
         // I
         if (rotation == 0) {
-            x = boardWidth - 1;
-        } else if (rotation == 1) {
-            x = boardWidth - 2;
-        } else if (rotation == 2) {
-            x = boardWidth;
-        } else if (rotation == 3) {
-            x = boardWidth - 2;
-        }
-    } else if (pieceID == 2 || pieceID == 3) {
-        // L or L mirrored
-        if (rotation == 2) {
-            x = boardHeight - 2;
+            x = -1;
+        } else if (rotation == 1 || rotation == 3) {
+            x = -2;
         } else {
-            x = boardHeight - 1;
+            x = 0;
+        }
+    } else if (pieceID == 2) {
+        // L
+        if (rotation == 0) {
+            x = -2;
+        } else {
+            x = -1;
+        }
+    } else if (pieceID == 3) {
+        // L mirrored
+        if (rotation == 2) {
+            x = -2;
+        } else {
+            x = -1;
         }
     } else {
         // Z or S or T
         if (rotation == 0) {
-            x = boardHeight - 2;
+            x = -2;
         } else {
-            x = boardHeight - 1;
+            x = -1;
+        }
+    }
+}
+
+void Pieces::furthestRight(int boardWidth, int boardHeight, int &x) {
+    if (pieceID == 0) {
+        // square
+        x = boardWidth - 4;
+    } else if (pieceID == 1) {
+        // I
+        if (rotation == 0) {
+            x = boardWidth - 5;
+        } else if (rotation == 1) {
+            x = boardWidth - 3;
+        } else if (rotation == 2) {
+            x = boardWidth - 4;
+        } else if (rotation == 3) {
+            x = boardWidth - 3;
+        }
+    } else if (pieceID == 2) {
+        // L
+        if (rotation == 2) {
+            x = boardWidth - 3;
+        } else {
+            x = boardWidth - 4;
+        }
+    } else if (pieceID == 3) {
+        // L mirrored
+        if (rotation == 0) {
+            x = boardWidth - 3;
+        } else {
+            x = boardWidth - 4;
+        }
+    } else {
+        // Z or S or T
+        if (rotation == 2) {
+            x = boardWidth - 3;
+        } else {
+            x = boardWidth - 4;
         }
     }
 }
