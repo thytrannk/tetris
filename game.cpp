@@ -117,7 +117,7 @@ void Game::clearLines() {
                 // This line is to be cleared
                 for (int i = y; i < BOARD_HEIGHT - 1; i++) {
                     for (int j = 0; j < BOARD_WIDTH; j++) {
-                        int above = board.value(j, y + 1);
+                        int above = board.value(j, i + 1);
                         board.assign(j, i, above);
                         board.assign(j, i + 1, 0);
                     }
@@ -133,8 +133,8 @@ void Game::hold() {
     if (!held) {
         if (!holdPiece) {
             // No hold piece yet
-            generatePiece(&holdPiece, currentPiece->pieceID);
-            delete currentPiece;
+            holdPiece = currentPiece;
+            holdPiece->rotation = 0;
             currentPiece = next1Piece;
             next1Piece = next2Piece;
             generatePiece(&next2Piece, 8);
@@ -143,6 +143,7 @@ void Game::hold() {
             int holdID = holdPiece->pieceID;
             delete holdPiece;
             holdPiece = currentPiece;
+            holdPiece->rotation = 0;
             generatePiece(&currentPiece, holdID);
         }
     }
@@ -173,14 +174,15 @@ void Game::lockPiece() {
 //    clearLines();
     mtx.lock();
     saveBoard();
+//    delete currentPiece;
     bool clear = highlightFullLines();
     if (clear) {
         sleep_for(TIME_LONG);
     }
     render(*gameShader, *backgroundShader);
     clearLines();
-    delete currentPiece;
     sleep_for(TIME_LONG);
+    delete currentPiece;
     currentPiece = next1Piece;
     next1Piece = next2Piece;
     generatePiece(&next2Piece, 8);
@@ -398,7 +400,7 @@ void Game::pieceHardFall() {
     }
 }
 
-void Game::saveBoard(void) {
+void Game::saveBoard() {
     for (int y = 0; y < 5; y++) {
         for (int x = 0; x < 5; x++) {
             int pieceCol = currentPiece->pieceValue(x, y);

@@ -25,27 +25,27 @@ const char backgroundFile[] = "../background.jpg";
 
 float color [11 /*colors*/][3 /*rgb*/] =
         {
-                // Empty
+                // 0 Empty
                 {0.0, 0.0, 0.0},
-                // Square
+                // 1 Square
                 {1.0, 1.0, 0.0},
-                // I
+                // 2 I
                 {0.0, 1.0, 1.0},
-                // L
+                // 3 L
                 {1.0, 0.5, 0.0},
-                // L mirrored
+                // 4 L mirrored
                 {0.0, 0.0, 1.0},
-                // Z
+                // 5 Z
                 {1.0, 0.0, 0.0},
-                // S
+                // 6 S
                 {0.0, 1.0, 0.0},
-                // T
+                // 7 T
                 {1.0, 0.0, 1.0},
-                // Transparent
+                // 8 Transparent
                 {1.0, 1.0, 1.0},
-                // Ghost
+                // 9 Ghost
                 {0.3, 0.3, 0.3},
-                // Highlighted (clearing)
+                // 10 Highlighted (clearing)
                 {0.7, 0.7, 0.7},
         };
 
@@ -274,7 +274,11 @@ void drawPiece(float *vertices, const string type) {
                         val = 0;
                     }
                 } else {
-                    val = game.currentPiece->pieceValue(j, i);
+                    if (game.currentPiece) {
+                        val = game.currentPiece->pieceValue(j, i);
+                    } else {
+                        val = 8; // current piece has been deleted, so render as transparent
+                    }
                 }
                 // bottom left vertex
                 // vertex[j][i].r
