@@ -35,6 +35,7 @@ int main() {
     }
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    glfwSetInputMode(window, GLFW_STICKY_KEYS, GLFW_TRUE);
     glfwSetKeyCallback(window, key_callback);
 
     // glad: load all OpenGL function pointers
@@ -70,17 +71,17 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 }
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-    if (key == GLFW_KEY_DOWN && action == GLFW_PRESS) {
+    if (key == GLFW_KEY_DOWN && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
         game.pieceDown(false);
     } else if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
         game.pieceHardFall();
-    } else if (key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
+    } else if (key == GLFW_KEY_LEFT && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
         game.pieceLeft();
-    } else if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS) {
+    } else if (key == GLFW_KEY_RIGHT && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
         game.pieceRight();
-    } else if ((key == GLFW_KEY_X && action == GLFW_PRESS) || (key == GLFW_KEY_UP && action == GLFW_PRESS)) {
+    } else if ((key == GLFW_KEY_X && (action == GLFW_PRESS || action == GLFW_REPEAT)) || (key == GLFW_KEY_UP && (action == GLFW_PRESS || action == GLFW_REPEAT))) {
         game.pieceRotationRight();
-    } else if (key == GLFW_KEY_Z && action == GLFW_PRESS) {
+    } else if (key == GLFW_KEY_Z && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
         game.pieceRotationLeft();
     } else if ((key == GLFW_KEY_LEFT_SHIFT && action == GLFW_PRESS) || (key == GLFW_KEY_RIGHT_SHIFT && action == GLFW_PRESS)) {
         game.hold();

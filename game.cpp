@@ -399,6 +399,7 @@ void Game::calcGhost() {
 void Game::pieceHardFall() {
     if (!game_over) {
         pieceY = ghostY;
+        lockPiece();
     }
 }
 
