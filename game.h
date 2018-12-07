@@ -29,7 +29,9 @@ private:
     void calcGhost();
     bool invalid(bool ghost);
     void saveBoard();
+    bool highlightFullLines();
     void clearLines();
+    void lockPiece();
 };
 
 #endif //TETRIS_GAME_H

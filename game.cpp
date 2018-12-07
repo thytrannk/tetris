@@ -31,15 +31,14 @@ const char pieceFall[] = "../audio/button.wav";
 const char pieceLock[] = "../audio/beep.wav";
 const char gameOver[] = "../audio/gameOver.wav";
 
-//Game::Game() {
-//    game_over = false;
-//}
+Shader *backgroundShader;
+Shader *gameShader;
 
 void Game::Loop() {
     ISound *game_Music = SoundEngine->play2D(gameMusic, true, false, true);
-    Shader backgroundShader = compileShader(vertexBackground, fragmentBackground);
+    backgroundShader = new Shader(vertexBackground, fragmentBackground);
     generateBackground();
-    Shader gameShader = compileShader(vertexSource, fragmentSource);
+    gameShader = new Shader(vertexSource, fragmentSource);
     bindBoardVertices();
     generatePiece(&currentPiece, 8);
     generatePiece(&next1Piece, 8);
@@ -51,7 +50,7 @@ void Game::Loop() {
     while (1) {
         for (int i = 0; i < 10; i++) {
             if (!game_over && !glfwWindowShouldClose(window)) {
-                render(gameShader, backgroundShader);
+                render(*gameShader, *backgroundShader);
                 sleep_for(TIME_SHORT);
             } else {
                 goto over;
@@ -64,7 +63,7 @@ over:
     while (invalid(false)) {
         pieceY++;
     }
-    render(gameShader, backgroundShader);
+    render(*gameShader, *backgroundShader);
     cout << "Game Over!" << endl;
     game_Music->stop();
     SoundEngine->play2D(gameOver, false);
@@ -82,12 +81,15 @@ over:
     glDeleteBuffers(1, &EBO_background);
 }
 
-void Game::clearLines() {
-    bool flag = true;
+bool Game::highlightFullLines() {
+    // returns true if there are lines to be cleared
+    bool ret = false;
+    bool flag;
     int endLine = pieceY + 5;
     for (int y = pieceY; y < endLine; y++) {
         if (y >= 0 && y < BOARD_HEIGHT) {
             // The row we're looking at is on the board and is where the last piece just locked on
+            flag = true;
             for (int i = 0; i < BOARD_WIDTH; i++) {
                 // go through each horizontal position
                 if (board.value(i, y) == 0) {
@@ -96,9 +98,26 @@ void Game::clearLines() {
                 }
             }
             if (flag) {
+                for (int i = 0; i < BOARD_WIDTH; i++) {
+                    board.assign(i, y, 10);
+                }
+                ret = true;
+            }
+        }
+    }
+    return ret;
+}
+
+void Game::clearLines() {
+    int endLine = pieceY + 5;
+    for (int y = pieceY; y < endLine; y++) {
+        if (y >= 0 && y < BOARD_HEIGHT) {
+            // The row we're looking at is on the board and is where the last piece just locked on
+            if (board.value(0, y) == 10) {
+                // This line is to be cleared
                 for (int i = y; i < BOARD_HEIGHT - 1; i++) {
                     for (int j = 0; j < BOARD_WIDTH; j++) {
-                        int above = board.value(j, i + 1);
+                        int above = board.value(j, y + 1);
                         board.assign(j, i, above);
                         board.assign(j, i + 1, 0);
                     }
@@ -141,26 +160,35 @@ void Game::pieceDown(bool autoFall) {
             // reach the bottom
             pieceY++;
             if (autoFall) {
-                SoundEngine->play2D(pieceLock, false);
-                clearLines();
-                mtx.lock();
-                saveBoard();
-                clearLines();
-                delete currentPiece;
-                sleep_for(TIME_LONG);
-                currentPiece = next1Piece;
-                next1Piece = next2Piece;
-                generatePiece(&next2Piece, 8);
-                held = false;
-                mtx.unlock();
-                SoundEngine->play2D(pieceFall, false);
-                if (invalid(false)) {
-                    game_over = true;
-                }
+                lockPiece();
             }
         } else if (autoFall) {
             SoundEngine->play2D(pieceFall, false);
         }
+    }
+}
+
+void Game::lockPiece() {
+    SoundEngine->play2D(pieceLock, false);
+//    clearLines();
+    mtx.lock();
+    saveBoard();
+    bool clear = highlightFullLines();
+    if (clear) {
+        sleep_for(TIME_LONG);
+    }
+    render(*gameShader, *backgroundShader);
+    clearLines();
+    delete currentPiece;
+    sleep_for(TIME_LONG);
+    currentPiece = next1Piece;
+    next1Piece = next2Piece;
+    generatePiece(&next2Piece, 8);
+    held = false;
+    mtx.unlock();
+    SoundEngine->play2D(pieceFall, false);
+    if (invalid(false)) {
+        game_over = true;
     }
 }
 

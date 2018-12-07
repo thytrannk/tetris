@@ -23,7 +23,7 @@ const char vertexBackground[] = "../vertexBackground.vs";
 const char fragmentBackground[] = "../fragmentBackground.fs";
 const char backgroundFile[] = "../background.jpg";
 
-float color [10 /*colors*/][3 /*rgb*/] =
+float color [11 /*colors*/][3 /*rgb*/] =
         {
                 // Empty
                 {0.0, 0.0, 0.0},
@@ -45,6 +45,8 @@ float color [10 /*colors*/][3 /*rgb*/] =
                 {1.0, 1.0, 1.0},
                 // Ghost
                 {0.3, 0.3, 0.3},
+                // Highlighted (clearing)
+                {0.7, 0.7, 0.7},
         };
 
 void getBoardVertices(float *vertices) {
@@ -452,12 +454,12 @@ void bindBoardVertices() {
     delete[] indices;
 }
 
-Shader compileShader(const char *vertexSource, const char *fragmentSource) {
-    // build and compile our shader program
-    // ------------------------------------
-    Shader shader(vertexSource, fragmentSource);
-    return shader;
-}
+//Shader compileShader(const char *vertexSource, const char *fragmentSource) {
+//    // build and compile our shader program
+//    // ------------------------------------
+//    Shader shader(vertexSource, fragmentSource);
+//    return shader;
+//}
 
 void bindPiece(string type, unsigned int *indices, unsigned int *VBO_piece, unsigned int *VAO_piece, unsigned int EBO_piece) {
     const int pcNumVertices = 100; // 5 blocks * 5 blocks * 4 corners
@@ -493,7 +495,7 @@ void bindPiece(string type, unsigned int *indices, unsigned int *VBO_piece, unsi
     delete[] piece;
 }
 
-void render(Shader gameShader, Shader backgroundShader) {
+void render(Shader &gameShader, Shader &backgroundShader) {
 
     // Bind board vertices colors
     unsigned int VBO_boardColors;
