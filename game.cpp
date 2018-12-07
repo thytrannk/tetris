@@ -27,7 +27,7 @@ uniform_int_distribution<> dist(0.0, 6.0);
 ISoundEngine *SoundEngine = createIrrKlangDevice();
 
 const char gameMusic[] = "../audio/background.wav";
-const char pieceFall[] = "../audio/button2.wav";
+const char pieceFall[] = "../audio/click.wav";
 const char pieceLock[] = "../audio/beep.wav";
 const char gameOver[] = "../audio/gameOver.wav";
 const char clearLine[] = "../audio/ring.wav";
@@ -164,8 +164,8 @@ void Game::pieceDown(bool autoFall) {
             if (autoFall) {
                 lockPiece();
             }
-        } else if (autoFall) {
-            SoundEngine->play2D(pieceFall, false);
+//        } else if (autoFall) {
+//            SoundEngine->play2D(pieceFall, false);
         }
     }
 }
@@ -180,10 +180,10 @@ void Game::lockPiece() {
     if (clear) {
         SoundEngine->play2D(clearLine, false);
         render(*gameShader, *backgroundShader, false);
-        sleep_for(TIME_LONG);
+        sleep_for(TIME_MID);
         clearLines();
     }
-    sleep_for(TIME_LONG);
+    sleep_for(TIME_MID);
     Pieces *temp = currentPiece;
     currentPiece = next1Piece;
     next1Piece = next2Piece;
@@ -191,7 +191,6 @@ void Game::lockPiece() {
     delete temp;
     held = false;
     mtx.unlock();
-    SoundEngine->play2D(pieceFall, false);
     if (invalid(false)) {
         game_over = true;
     }

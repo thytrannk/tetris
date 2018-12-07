@@ -46,7 +46,7 @@ float color [11 /*colors*/][3 /*rgb*/] =
                 // 9 Ghost
                 {0.3, 0.3, 0.3},
                 // 10 Highlighted (clearing)
-                {0.7, 0.7, 0.7},
+                {1.0, 0.8, 0.0},
         };
 
 void getBoardVertices(float *vertices) {
