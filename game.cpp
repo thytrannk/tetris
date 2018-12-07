@@ -44,7 +44,7 @@ void Game::Loop() {
     generatePiece(&currentPiece, 8);
     generatePiece(&next1Piece, 8);
     generatePiece(&next2Piece, 8);
-    holdID = 7;
+    holdPiece = nullptr;
     #ifdef __APPLE__
         dummyRender();
     #endif
@@ -71,6 +71,9 @@ over:
     delete currentPiece;
     delete next1Piece;
     delete next2Piece;
+    if (holdPiece) {
+        delete holdPiece;
+    }
     glDeleteVertexArrays(1, &VAO_board);
     glDeleteBuffers(1, &VBO_boardPositions);
     glDeleteBuffers(1, &EBO_board);
@@ -109,19 +112,19 @@ void Game::clearLines() {
 
 void Game::hold() {
     if (!held) {
-        if (holdID == 7) {
+        if (!holdPiece) {
             // No hold piece yet
-            holdID = currentPiece->pieceID;
+            generatePiece(&holdPiece, currentPiece->pieceID);
             delete currentPiece;
             currentPiece = next1Piece;
             next1Piece = next2Piece;
             generatePiece(&next2Piece, 8);
         } else {
             // There is a hold piece in place
-            int temp = currentPiece->pieceID;
-            delete currentPiece;
+            int holdID = holdPiece->pieceID;
+            delete holdPiece;
+            holdPiece = currentPiece;
             generatePiece(&currentPiece, holdID);
-            holdID = temp;
         }
     }
     held = true;

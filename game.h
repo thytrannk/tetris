@@ -12,7 +12,7 @@ public:
     Pieces *currentPiece;
     Pieces *next1Piece;
     Pieces *next2Piece;
-    int holdID;
+    Pieces *holdPiece;
     bool held = false;
     int pieceX; // x coordinate of the bottom left corner of piece matrix
     int pieceY; // y coordinate of the bottom left corner of piece matrix

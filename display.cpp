@@ -145,12 +145,14 @@ void indexVertices(unsigned int *ind) {
 void drawPiece(float *vertices, const string type) {
     if (type == "current" || type == "ghost") {
         pcStartX = startX + game.pieceX * CUBE_SIZE_X;
+    } else if (type == "hold") {
+        pcStartX = CUBE_SIZE_X * (-BOARD_WIDTH / 2.0f - 7.0f);
     } else {
         pcStartX = CUBE_SIZE_X * (BOARD_WIDTH / 2.0f + 2.0f);
     }
     if (type == "ghost") {
         pcStartY = startY + game.ghostY * CUBE_SIZE_Y;
-    } else if (type == "next1") {
+    } else if (type == "next1" || type == "hold") {
         pcStartY = CUBE_SIZE_Y * (BOARD_HEIGHT / 2.0f - 5.0f);
     } else if (type == "next2") {
         pcStartY = CUBE_SIZE_Y * (BOARD_HEIGHT / 2.0f - 12.0f);
@@ -263,6 +265,12 @@ void drawPiece(float *vertices, const string type) {
                     val = game.next1Piece->pieceValue(j, i);
                 } else if (type == "next2") {
                     val = game.next2Piece->pieceValue(j, i);
+                } else if (type == "hold") {
+                    if (game.holdPiece) {
+                        val = game.holdPiece->pieceValue(j, i);
+                    } else {
+                        val = 0;
+                    }
                 } else {
                     val = game.currentPiece->pieceValue(j, i);
                 }
@@ -516,7 +524,8 @@ void render(Shader gameShader, Shader backgroundShader) {
 
     // Create current piece, next pieces and ghost vertices position, colors and indices
 
-    unsigned int VBO_current, VAO_current, EBO_piece, VBO_ghost, VAO_ghost, VBO_next1, VAO_next1, VBO_next2, VAO_next2;
+    unsigned int VBO_current, VAO_current, EBO_piece, VBO_ghost, VAO_ghost,
+            VBO_next1, VAO_next1, VBO_next2, VAO_next2, VBO_hold, VAO_hold;
 
     auto *indices = new unsigned int[150]; // 5 blocks * 5 blocks * 2 triangles * 3 vertices
     indexPiece(indices);
@@ -536,6 +545,9 @@ void render(Shader gameShader, Shader backgroundShader) {
 
     // bind vertex array for next2 piece
     bindPiece("next2", indices, &VBO_next2, &VAO_next2, EBO_piece);
+
+    // bind vertex array for hold piece
+    bindPiece("hold", indices, &VBO_hold, &VAO_hold, EBO_piece);
 
     // render loop
     // -----------
@@ -592,6 +604,13 @@ void render(Shader gameShader, Shader backgroundShader) {
     glDrawElements(GL_TRIANGLES, 150, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0); // no need to unbind it every time
 
+    gameShader.setFloat("startX", CUBE_SIZE_X * (-BOARD_WIDTH / 2.0f - 7.0f));
+    gameShader.setFloat("startY", CUBE_SIZE_X * (BOARD_WIDTH / 2.0f - 5.0f));
+
+    // draw hold piece
+    glBindVertexArray(VAO_hold);
+    glDrawElements(GL_TRIANGLES, 150, GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0); // no need to unbind it every time
 
     // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
     // -------------------------------------------------------------------------------
@@ -607,6 +626,8 @@ void render(Shader gameShader, Shader backgroundShader) {
     glDeleteBuffers(1, &VBO_next1);
     glDeleteVertexArrays(1, &VAO_next2);
     glDeleteBuffers(1, &VBO_next2);
+    glDeleteVertexArrays(1, &VAO_hold);
+    glDeleteBuffers(1, &VBO_hold);
     glDeleteBuffers(1, &EBO_piece);
 }
 
