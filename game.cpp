@@ -27,9 +27,10 @@ uniform_int_distribution<> dist(0.0, 6.0);
 ISoundEngine *SoundEngine = createIrrKlangDevice();
 
 const char gameMusic[] = "../audio/background.wav";
-const char pieceFall[] = "../audio/button.wav";
+const char pieceFall[] = "../audio/button2.wav";
 const char pieceLock[] = "../audio/beep.wav";
 const char gameOver[] = "../audio/gameOver.wav";
+const char clearLine[] = "../audio/ring.wav";
 
 Shader *backgroundShader;
 Shader *gameShader;
@@ -50,7 +51,7 @@ void Game::Loop() {
     while (1) {
         for (int i = 0; i < 10; i++) {
             if (!game_over && !glfwWindowShouldClose(window)) {
-                render(*gameShader, *backgroundShader);
+                render(*gameShader, *backgroundShader, true);
                 sleep_for(TIME_SHORT);
             } else {
                 goto over;
@@ -63,7 +64,7 @@ over:
     while (invalid(false)) {
         pieceY++;
     }
-    render(*gameShader, *backgroundShader);
+    render(*gameShader, *backgroundShader, true);
     cout << "Game Over!" << endl;
     game_Music->stop();
     SoundEngine->play2D(gameOver, false);
@@ -177,15 +178,17 @@ void Game::lockPiece() {
 //    delete currentPiece;
     bool clear = highlightFullLines();
     if (clear) {
+        SoundEngine->play2D(clearLine, false);
+        render(*gameShader, *backgroundShader, false);
         sleep_for(TIME_LONG);
+        clearLines();
     }
-    render(*gameShader, *backgroundShader);
-    clearLines();
     sleep_for(TIME_LONG);
-    delete currentPiece;
+    Pieces *temp = currentPiece;
     currentPiece = next1Piece;
     next1Piece = next2Piece;
     generatePiece(&next2Piece, 8);
+    delete temp;
     held = false;
     mtx.unlock();
     SoundEngine->play2D(pieceFall, false);

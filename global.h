@@ -25,5 +25,6 @@ extern const char gameMusic[];
 extern const char pieceFall[];
 extern const char pieceLock[];
 extern const char gameOver[];
+extern const char clearLine[];
 
 #endif //TETRIS_GLOBAL_H

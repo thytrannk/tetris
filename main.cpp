@@ -78,11 +78,11 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         game.pieceLeft();
     } else if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS) {
         game.pieceRight();
-    } else if (key == GLFW_KEY_X && action == GLFW_PRESS) {
+    } else if ((key == GLFW_KEY_X && action == GLFW_PRESS) || (key == GLFW_KEY_UP && action == GLFW_PRESS)) {
         game.pieceRotationRight();
     } else if (key == GLFW_KEY_Z && action == GLFW_PRESS) {
         game.pieceRotationLeft();
-    } else if (key == GLFW_KEY_C && action == GLFW_PRESS) {
+    } else if ((key == GLFW_KEY_LEFT_SHIFT && action == GLFW_PRESS) || (key == GLFW_KEY_RIGHT_SHIFT && action == GLFW_PRESS)) {
         game.hold();
     }
 }

@@ -499,7 +499,10 @@ void bindPiece(string type, unsigned int *indices, unsigned int *VBO_piece, unsi
     delete[] piece;
 }
 
-void render(Shader &gameShader, Shader &backgroundShader) {
+void render(Shader &gameShader, Shader &backgroundShader, bool currentPiece) {
+
+    // if currentPiece == true, current piece is rendered
+    // if currentPiece == false, rendering the board when lines are being cleared, so current piece is not rendered
 
     // Bind board vertices colors
     unsigned int VBO_boardColors;
@@ -540,11 +543,12 @@ void render(Shader &gameShader, Shader &backgroundShader) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_piece);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * 150, indices, GL_STATIC_DRAW);
 
-    // bind vertex array for ghost
-    bindPiece("ghost", indices, &VBO_ghost, &VAO_ghost, EBO_piece);
-
-    // bind vertex array for current piece
-    bindPiece("current", indices, &VBO_current, &VAO_current, EBO_piece);
+    if (currentPiece) {
+        // bind vertex array for ghost
+        bindPiece("ghost", indices, &VBO_ghost, &VAO_ghost, EBO_piece);
+        // bind vertex array for current piece
+        bindPiece("current", indices, &VBO_current, &VAO_current, EBO_piece);
+    }
 
     // bind vertex array for next1 piece
     bindPiece("next1", indices, &VBO_next1, &VAO_next1, EBO_piece);
@@ -587,14 +591,17 @@ void render(Shader &gameShader, Shader &backgroundShader) {
     glBindVertexArray(VAO_board); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
     glDrawElements(GL_TRIANGLES, numTriangles * 3, GL_UNSIGNED_INT, 0);
 
-    // draw ghost
-    glBindVertexArray(VAO_ghost);
-    glDrawElements(GL_TRIANGLES, 150, GL_UNSIGNED_INT, 0);
+    if (currentPiece) {
+        // draw ghost
+        glBindVertexArray(VAO_ghost);
+        glDrawElements(GL_TRIANGLES, 150, GL_UNSIGNED_INT, 0);
+        glBindVertexArray(0); // no need to unbind it every time
 
-    // draw current piece
-    glBindVertexArray(VAO_current);
-    glDrawElements(GL_TRIANGLES, 150, GL_UNSIGNED_INT, 0);
-    glBindVertexArray(0); // no need to unbind it every time
+        // draw current piece
+        glBindVertexArray(VAO_current);
+        glDrawElements(GL_TRIANGLES, 150, GL_UNSIGNED_INT, 0);
+        glBindVertexArray(0); // no need to unbind it every time
+    }
 
     gameShader.setFloat("startX", CUBE_SIZE_X * (BOARD_WIDTH / 2.0f + 2.0f));
     gameShader.setFloat("startY", CUBE_SIZE_X * (BOARD_WIDTH / 2.0f - 12.0f));
@@ -624,10 +631,12 @@ void render(Shader &gameShader, Shader &backgroundShader) {
     glfwPollEvents();
 
     glDeleteBuffers(1, &VBO_boardColors);
-    glDeleteVertexArrays(1, &VAO_current);
-    glDeleteBuffers(1, &VBO_current);
-    glDeleteVertexArrays(1, &VAO_ghost);
-    glDeleteBuffers(1, &VBO_ghost);
+    if (currentPiece) {
+        glDeleteVertexArrays(1, &VAO_current);
+        glDeleteBuffers(1, &VBO_current);
+        glDeleteVertexArrays(1, &VAO_ghost);
+        glDeleteBuffers(1, &VBO_ghost);
+    }
     glDeleteVertexArrays(1, &VAO_next1);
     glDeleteBuffers(1, &VBO_next1);
     glDeleteVertexArrays(1, &VAO_next2);
