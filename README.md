@@ -18,5 +18,8 @@ An implementation (from scratch) of Tetris (https://en.wikipedia.org/wiki/Tetris
   * Rotate left: Z
   * Hold: SHIFT key
 
+*Background image: Free stock photo from https://www.pexels.com/search/background/*
+
+*Music and sound effects: From https://freesound.org*
 
 ![Alt text](img/screenshot.png?raw=true "Title")
