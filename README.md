@@ -19,4 +19,4 @@ An implementation (from scratch) of Tetris (https://en.wikipedia.org/wiki/Tetris
   * Hold: SHIFT key
 
 
-![Alt text](screenshot.png?raw=true "Title")
+![Alt text](img/screenshot.png?raw=true "Title")

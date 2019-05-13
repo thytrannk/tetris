@@ -21,7 +21,7 @@ const char vertexSource[] = "../vertex.vs";
 const char fragmentSource[] = "../fragment.fs";
 const char vertexBackground[] = "../vertexBackground.vs";
 const char fragmentBackground[] = "../fragmentBackground.fs";
-const char backgroundFile[] = "../background.jpg";
+const char backgroundFile[] = "../img/background.jpg";
 
 float color [11 /*colors*/][3 /*rgb*/] =
         {
