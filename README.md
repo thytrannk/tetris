@@ -1,6 +1,6 @@
 # Tetris
 
-An implementation of Tetris (https://en.wikipedia.org/wiki/Tetris) in C++ with OpenGL.
+An implementation (from scratch) of Tetris (https://en.wikipedia.org/wiki/Tetris) in C++. Visuals are done with OpenGL.
 
 #### Features:
   * Music
