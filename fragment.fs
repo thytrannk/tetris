@@ -11,44 +11,35 @@ uniform float cubeSizeY;
 uniform int boardWidth;
 uniform int boardHeight;
 
-/**
- * Return the normalized direction to march in from the eye point for a single pixel.
- *
- * fieldOfView: vertical field of view in degrees
- * size: resolution of the output image
- * fragCoord: the x,y coordinate of the pixel in the output image
- */
 vec3 rayDirection(float fieldOfView, vec2 fragCoord) {
+    // Return the normalized direction to march in from the eye point for a single pixel
+    // fieldOfView: vertical field of view in degrees
+    // size: resolution of the output image
+    // fragCoord: the x,y coordinate of the pixel in the output image
+
     vec2 xy = fragCoord;
     float z = 1.0 / tan(radians(fieldOfView) / 2.0);// y goes from 1 to -1
     return normalize(vec3(xy, -z));
 }
 
-/**
- * Normal on the surface at point p.
- */
 vec3 estimateNormal(vec3 p) {
+    // Return the normal on the surface at point p
     return normalize(vec3(0.0, 0.0, 1.0));
 }
 
-/**
- * Lighting contribution of a single point light source via Phong illumination.
- *
- * The vec3 returned is the RGB color of the light's contribution.
- *
- * k_a: Ambient color
- * k_d: Diffuse color
- * k_s: Specular color
- * alpha: Shininess coefficient
- * p: position of point being lit
- * eye: the position of the camera
- * lightPos: the position of the light
- * lightIntensity: color/intensity of the light
- *
- * See https://en.wikipedia.org/wiki/Phong_reflection_model#Description
- */
-vec3 phongContribForLight(vec3 k_d, vec3 k_s, float alpha, vec3 p, vec3 eye,
-        vec3 lightPos, vec3 lightIntensity) {
+vec3 phongContribForLight(vec3 k_d, vec3 k_s, float alpha, vec3 p, vec3 eye, vec3 lightPos, vec3 lightIntensity) {
+    // Lighting contribution of a single point light source via Phong illumination.
+    // Return RGB color of the light's contribution.
+    // k_a: Ambient color
+    // k_d: Diffuse color
+    // k_s: Specular color
+    // alpha: Shininess coefficient
+    // p: position of point being lit
+    // eye: the position of the camera
+    // lightPos: the position of the light
+    // lightIntensity: color/intensity of the light
+    // See https://en.wikipedia.org/wiki/Phong_reflection_model#Description
+
     vec3 N = estimateNormal(p);
     vec3 L = normalize(lightPos - p);
     vec3 V = normalize(eye - p);
@@ -69,20 +60,17 @@ vec3 phongContribForLight(vec3 k_d, vec3 k_s, float alpha, vec3 p, vec3 eye,
     return lightIntensity * (k_d * dotLN + k_s * pow(dotRV, alpha));
 }
 
-/**
- * Lighting via Phong illumination.
- *
- * The vec3 returned is the RGB color of that point after lighting is applied.
- * k_a: Ambient color
- * k_d: Diffuse color
- * k_s: Specular color
- * alpha: Shininess coefficient
- * p: position of point being lit
- * eye: the position of the camera
- *
- * See https://en.wikipedia.org/wiki/Phong_reflection_model#Description
- */
 vec3 phongIllumination(vec3 origin, vec3 k_a, vec3 k_d, vec3 k_s, float alpha, vec3 p, vec3 eye) {
+    // Lighting via Phong illumination.
+    // Return RGB color of the point after lighting is applied
+    // k_a: Ambient color
+    // k_d: Diffuse color
+    // k_s: Specular color
+    // alpha: Shininess coefficient
+    // p: position of point being lit
+    // eye: the position of the camera
+    // See https://en.wikipedia.org/wiki/Phong_reflection_model#Description
+
     const vec3 ambientLight = 0.5 * vec3(1.0, 1.0, 1.0);
     vec3 color = ambientLight * k_a;
 
