@@ -19,4 +19,4 @@ An implementation of Tetris (https://en.wikipedia.org/wiki/Tetris) in C++ with O
   * Hold: SHIFT key
 
 
-![Alt text](../screenshot.png?raw=true "Title")
+![Alt text](screenshot.png?raw=true "Title")
