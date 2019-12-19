@@ -34,6 +34,3 @@ void Board::assign(int x, int y, int val) {
 void Board::deleteLine(int y) {
 
 }
-
-
-
