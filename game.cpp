@@ -48,19 +48,21 @@ void Game::Loop() {
     #ifdef __APPLE__
         dummyRender();
     #endif
-    while (1) {
-        for (int i = 0; i < 10; i++) {
+    bool stop = false;
+    while (!stop) {
+        for (int i = 0; i < 10 && !stop; i++) {
             if (!game_over && !glfwWindowShouldClose(window)) {
                 render(*gameShader, *backgroundShader, true);
                 sleep_for(TIME_SHORT);
             } else {
-                goto over;
+                stop = true;
             }
         }
-        pieceDown(true);
+        if (!stop) {
+            pieceDown(true);
+        }
     }
 
-over:
     while (invalid(false)) {
         pieceY++;
     }
